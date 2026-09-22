@@ -1,15 +1,22 @@
-    <template>
-    <div class="summary-card">
-        <div class="icon-box">
-        <span>{{ icon }}</span>
-        </div>
+<template>
+  <div class="summary-card">
 
-        <div class="card-info">
-        <p class="label">{{ title }}</p>
-        <h2>{{ value }}</h2>
-        </div>
+    <div class="card-icon">
+      {{ icon }}
     </div>
-    </template>
+
+    <div class="card-content">
+      <p class="card-title">
+        {{ title }}
+      </p>
+
+      <h2 class="card-value">
+        {{ value }}
+      </h2>
+    </div>
+
+  </div>
+</template>
 
 <script setup>
 defineProps({
@@ -19,61 +26,71 @@ defineProps({
   },
 
   value: {
-    type: [String, Number],
+    type: Number,
     required: true
   },
 
   icon: {
     type: String,
-    default: '✈️'
+    required: true
   }
 })
 </script>
 
 <style scoped>
 .summary-card {
-  flex: 1;
-  min-height: 100px;
-  padding: 18px;
-
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
+
+  min-height: 92px;
+  padding: 20px;
 
   background: var(--white);
   border: 1px solid var(--border);
   border-radius: 12px;
 }
 
-.icon-box {
-  width: 42px;
-  height: 42px;
+/* ICON */
+
+.card-icon {
+  width: 48px;
+  height: 48px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  background: #eef4ff;
+  flex-shrink: 0;
+
+  background: #edf3ff;
   border-radius: 10px;
 
   font-size: 20px;
 }
 
-.card-info {
+/* TEXT */
+
+.card-content {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
-.label {
+.card-title {
   margin: 0;
-  font-size: 13px;
+
+  font-size: 12px;
   color: var(--text-muted);
 }
 
-.card-info h2 {
+.card-value {
   margin: 0;
-  font-size: 24px;
+
+  font-size: 28px;
+  line-height: 1;
+
+  font-weight: 700;
   color: var(--text);
 }
 </style>

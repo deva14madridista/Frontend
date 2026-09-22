@@ -1,33 +1,30 @@
 <template>
   <div class="upcoming-trips">
-
     <div class="section-header">
-      <h2>Perjalanan Mendatang</h2>
-      <a href="#">Lihat Semua</a>
+      <div>
+        <h2>Perjalanan Mendatang</h2>
+        <p>Jadwal perjalanan yang akan datang</p>
+      </div>
+
+      <NuxtLink to="/pengajuan-perjalanan">
+        Lihat Semua
+      </NuxtLink>
     </div>
 
     <div class="trip-list">
-
       <div
         v-for="trip in trips"
         :key="trip.id"
         class="trip-item"
       >
         <div class="trip-top">
-          <span class="route">
-            {{ trip.route }}
-          </span>
-
-          <span class="date">
-            {{ trip.date }}
-          </span>
+          <span class="route">{{ trip.route }}</span>
+          <span class="date">{{ trip.date }}</span>
         </div>
 
         <p>{{ trip.description }}</p>
       </div>
-
     </div>
-
   </div>
 </template>
 
@@ -50,9 +47,9 @@ const trips = [
 
 <style scoped>
 .upcoming-trips {
-  width: 280px;
+  width: 300px;
+  flex-shrink: 0;
   padding: 20px;
-
   background: var(--white);
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -60,19 +57,29 @@ const trips = [
 
 .section-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
+  gap: 10px;
   margin-bottom: 16px;
 }
 
 .section-header h2 {
   margin: 0;
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 600;
   color: var(--text);
 }
 
+.section-header p {
+  margin: 5px 0 0;
+  font-size: 10px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
 .section-header a {
-  font-size: 11px;
+  flex-shrink: 0;
+  font-size: 10px;
   color: var(--primary);
   text-decoration: none;
 }
@@ -100,7 +107,6 @@ const trips = [
   padding: 4px 7px;
   background: #e8f0ff;
   border-radius: 4px;
-
   font-size: 10px;
   color: var(--primary);
 }
@@ -115,5 +121,10 @@ const trips = [
   font-size: 11px;
   line-height: 1.5;
   color: var(--text);
+}
+@media (max-width: 700px) {
+  .upcoming-trips {
+    width: 100%;
+  }
 }
 </style>

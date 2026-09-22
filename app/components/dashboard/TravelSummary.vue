@@ -1,27 +1,40 @@
 <template>
   <div class="travel-summary">
-    <div class="summary-header">
-      <h2>Ringkasan Perjalanan Tahun 2026</h2>
 
-      <button class="more-button">•••</button>
+    <div class="summary-header">
+      <div>
+        <h2>Ringkasan Perjalanan</h2>
+        <p>Jumlah perjalanan sepanjang tahun 2026</p>
+      </div>
+
+      <button class="more-button">
+        •••
+      </button>
     </div>
 
     <div class="chart">
+
       <div
         v-for="item in monthlyData"
         :key="item.month"
         class="chart-item"
       >
-        <div class="bar-wrapper">
+
+        <div class="bar-area">
           <div
             class="bar"
-            :style="{ height: item.value * 10 + 'px' }"
+            :style="{ height: `${item.value * 12}px` }"
           ></div>
         </div>
 
-        <span class="month">{{ item.month }}</span>
+        <span class="month">
+          {{ item.month }}
+        </span>
+
       </div>
+
     </div>
+
   </div>
 </template>
 
@@ -44,65 +57,91 @@ const monthlyData = [
 
 <style scoped>
 .travel-summary {
+  flex: 1;
+
+  padding: 20px;
+
   background: var(--white);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 20px;
-  flex: 1;
 }
+
+/* HEADER */
 
 .summary-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
 }
 
 .summary-header h2 {
   margin: 0;
+
   font-size: 16px;
+  font-weight: 600;
   color: var(--text);
+}
+
+.summary-header p {
+  margin: 5px 0 0;
+
+  font-size: 11px;
+  color: var(--text-muted);
 }
 
 .more-button {
   border: none;
   background: transparent;
-  color: var(--text-muted);
-  cursor: pointer;
+
   font-size: 16px;
+  color: var(--text-muted);
+
+  cursor: pointer;
 }
 
+/* CHART */
+
 .chart {
-  height: 170px;
-  margin-top: 25px;
+  height: 180px;
+
+  margin-top: 24px;
 
   display: flex;
   align-items: flex-end;
-  justify-content: space-between;
-  gap: 10px;
+  gap: 12px;
 }
 
 .chart-item {
-  height: 100%;
   flex: 1;
+  height: 100%;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
+
   gap: 8px;
 }
 
-.bar-wrapper {
-  height: 130px;
+.bar-area {
+  width: 100%;
+  height: 140px;
 
   display: flex;
   align-items: flex-end;
+  justify-content: center;
 }
 
 .bar {
-  width: 20px;
+  width: 18px;
+
+  max-height: 140px;
+
   background: var(--primary);
-  border-radius: 4px 4px 0 0;
+
+  border-radius: 5px 5px 0 0;
+
+  transition: height 0.2s ease;
 }
 
 .month {

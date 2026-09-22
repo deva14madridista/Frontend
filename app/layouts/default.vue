@@ -5,7 +5,6 @@
     <main class="main-content">
       <LayoutNavbar />
 
-
       <section class="page-content">
         <slot />
       </section>
@@ -17,20 +16,15 @@
 .app-layout {
   display: flex;
   min-height: 100vh;
+  background: #f5f6f8;
 }
 
 .main-content {
   flex: 1;
-}
-
-.navbar {
-  height: 70px;
-  padding: 24px;
-  background: var(--white);
-  border-bottom: 1px solid var(--border);
+  min-width: 0;
 }
 
 .page-content {
-  padding: 24px;
+  min-height: calc(100vh - 70px);
 }
 </style>
