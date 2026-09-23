@@ -1,7 +1,7 @@
 <template>
   <div class="page">
-    <h1>Pemesanan</h1>
-    <p>Halaman pemesanan Eduabsen.</p>
+    <h1>Laporan</h1>
+    <p>Halaman laporan Eduabsen.</p>
   </div>
 </template>
 
