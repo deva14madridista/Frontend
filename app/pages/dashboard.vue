@@ -5,7 +5,7 @@
     <div class="dashboard-header">
       <div>
         <h1>Dashboard</h1>
-        <p>Selamat datang kembali, Deva Fauzan</p>
+        <p>Selamat datang kembali, Deva Fauzan Nuraqli</p>
       </div>
 
       <div class="header-actions">

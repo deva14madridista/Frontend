@@ -1,0 +1,537 @@
+<template>
+  <div class="pengajuan-page">
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <NuxtLink to="/dashboard">Dashboard</NuxtLink>
+      <span>›</span>
+      <span>Pengajuan Perjalanan</span>
+      <span>›</span>
+      <strong>Buat Baru</strong>
+    </div>
+
+    <!-- Page Title -->
+    <div class="page-title">
+      <NuxtLink to="/dashboard" class="back-icon">
+        ←
+      </NuxtLink>
+
+      <h1>Pengajuan Perjalanan Dinas</h1>
+    </div>
+
+    <!-- Form Card -->
+    <div class="form-card">
+
+      <div class="form-content">
+
+        <h2>Informasi Perjalanan</h2>
+
+        <!-- Row 1 -->
+        <div class="form-row three-column">
+
+          <div class="form-group">
+            <label>
+              Tujuan Kota <span>*</span>
+            </label>
+
+            <input
+              type="text"
+              placeholder="Pilih kota tujuan"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>
+              Tanggal Berangkat <span>*</span>
+            </label>
+
+            <div class="input-with-icon">
+              <input
+                type="date"
+              />
+              <span>▣</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>
+              Tanggal Kembali <span>*</span>
+            </label>
+
+            <div class="input-with-icon">
+              <input
+                type="date"
+              />
+              <span>▣</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Row 2 -->
+        <div class="form-row">
+
+          <div class="form-group">
+            <label>
+              Jenis Perjalanan <span>*</span>
+            </label>
+
+            <select>
+              <option value="">
+                Pilih jenis perjalanan
+              </option>
+
+              <option value="dinas">
+                Perjalanan Dinas
+              </option>
+
+              <option value="meeting">
+                Meeting
+              </option>
+
+              <option value="training">
+                Training
+              </option>
+
+              <option value="lainnya">
+                Lainnya
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>
+              Tujuan/Keperluan <span>*</span>
+            </label>
+
+            <textarea
+              rows="4"
+              placeholder="Masukkan tujuan atau keperluan perjalanan secara detail..."
+            ></textarea>
+          </div>
+
+        </div>
+
+        <!-- Row 3 -->
+        <div class="form-row">
+
+          <div class="form-group">
+            <label>
+              Estimasi Anggaran <span>*</span>
+            </label>
+
+            <div class="currency-input">
+              <span>Rp</span>
+
+              <input
+                type="number"
+                placeholder="0"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>
+              Lampiran <small>(Opsional)</small>
+            </label>
+
+            <div class="file-input">
+              <label class="file-button">
+                Pilih File
+                <input type="file" />
+              </label>
+
+              <span class="file-name">
+                Belum ada file dipilih
+              </span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="form-footer">
+
+        <button
+          type="button"
+          class="cancel-button"
+        >
+          Batal
+        </button>
+
+        <button
+          type="button"
+          class="submit-button"
+        >
+          Ajukan
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+</template>
+
+<style scoped>
+.pengajuan-page {
+  min-height: 100vh;
+  padding: 24px 28px;
+  background: #f5f6f8;
+}
+
+/* =========================
+   BREADCRUMB
+========================= */
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  margin-bottom: 4px;
+
+  font-size: 9px;
+  color: #9aa4b5;
+}
+
+.breadcrumb a {
+  color: #9aa4b5;
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  color: var(--primary);
+}
+
+.breadcrumb strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* =========================
+   PAGE TITLE
+========================= */
+
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  margin-bottom: 24px;
+}
+
+.page-title h1 {
+  margin: 0;
+
+  font-size: 22px;
+  font-weight: 700;
+
+  color: var(--text);
+}
+
+.back-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--text);
+  text-decoration: none;
+
+  font-size: 24px;
+  line-height: 1;
+}
+
+/* =========================
+   FORM CARD
+========================= */
+
+.form-card {
+  background: var(--white);
+
+  border: 1px solid var(--border);
+  border-radius: 12px;
+
+  overflow: hidden;
+}
+
+.form-content {
+  padding: 24px;
+}
+
+.form-content h2 {
+  margin: 0 0 22px;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  color: var(--text);
+}
+
+/* =========================
+   FORM ROW
+========================= */
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  gap: 18px;
+
+  margin-bottom: 18px;
+}
+
+.three-column {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* =========================
+   FORM GROUP
+========================= */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.form-group label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.form-group label span {
+  color: #ef4444;
+}
+
+.form-group label small {
+  font-size: 9px;
+  font-weight: 400;
+  color: #8d97a8;
+}
+
+/* =========================
+   INPUT
+========================= */
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 9px 10px;
+
+  border: 1px solid #dce2eb;
+  border-radius: 6px;
+
+  background: var(--white);
+  color: var(--text);
+
+  font-family: inherit;
+  font-size: 10px;
+
+  outline: none;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #a8b1c0;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--primary);
+}
+
+.form-group textarea {
+  resize: none;
+  min-height: 73px;
+}
+
+/* =========================
+   DATE INPUT
+========================= */
+
+.input-with-icon {
+  position: relative;
+}
+
+.input-with-icon input {
+  padding-right: 32px;
+}
+
+.input-with-icon span {
+  position: absolute;
+
+  right: 10px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  font-size: 12px;
+  color: #718096;
+
+  pointer-events: none;
+}
+
+/* =========================
+   CURRENCY
+========================= */
+
+.currency-input {
+  display: flex;
+  align-items: center;
+
+  border: 1px solid #dce2eb;
+  border-radius: 6px;
+
+  overflow: hidden;
+}
+
+.currency-input span {
+  padding-left: 10px;
+
+  font-size: 10px;
+  color: #8d97a8;
+}
+
+.currency-input input {
+  border: none;
+  border-radius: 0;
+}
+
+.currency-input:focus-within {
+  border-color: var(--primary);
+}
+
+/* =========================
+   FILE INPUT
+========================= */
+
+.file-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  min-height: 35px;
+}
+
+.file-button {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 8px 11px;
+
+  border: 1px solid #dce2eb;
+  border-radius: 6px;
+
+  background: #f7f8fa;
+  color: var(--text);
+
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.file-button input {
+  display: none;
+}
+
+.file-name {
+  font-size: 9px;
+  color: #9aa4b5;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.form-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  padding: 12px 24px 20px;
+
+  border-top: 1px solid #e5e8ee;
+}
+
+.cancel-button,
+.submit-button {
+  min-width: 61px;
+
+  padding: 8px 14px;
+
+  border-radius: 6px;
+
+  font-family: inherit;
+  font-size: 10px;
+
+  cursor: pointer;
+}
+
+.cancel-button {
+  border: 1px solid var(--primary);
+
+  background: var(--white);
+  color: var(--primary);
+}
+
+.submit-button {
+  border: 1px solid var(--primary);
+
+  background: var(--primary);
+  color: var(--white);
+}
+
+.cancel-button:hover {
+  background: #f2f5ff;
+}
+
+.submit-button:hover {
+  opacity: 0.9;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 900px) {
+  .three-column {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .pengajuan-page {
+    padding: 16px;
+  }
+
+  .page-title h1 {
+    font-size: 20px;
+  }
+
+  .form-row,
+  .three-column {
+    grid-template-columns: 1fr;
+  }
+
+  .file-input {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .form-footer {
+    flex-direction: column-reverse;
+  }
+
+  .cancel-button,
+  .submit-button {
+    width: 100%;
+  }
+}
+</style>

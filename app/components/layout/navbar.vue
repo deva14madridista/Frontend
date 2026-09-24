@@ -15,7 +15,7 @@
         </div>
 
         <div class="profile-info">
-          <span class="name">Deva Fauzan</span>
+          <span class="name">Deva Fauzan Nuraqli</span>
           <span class="role">Administrator</span>
         </div>
       </div>
