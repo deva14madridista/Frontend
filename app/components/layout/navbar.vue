@@ -1,13 +1,13 @@
 <template>
   <header class="navbar">
     <div class="navbar-left">
-      <h1>Dashboard</h1>
+        <div class="logo">
+      Eduabsen
+    </div>
     </div>
 
     <div class="navbar-right">
-      <button class="notification">
-        🔔
-      </button>
+     
 
       <div class="profile">
         <div class="avatar">
@@ -33,6 +33,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.logo {
+  padding: 0 10px;
+  font-size: 25px;
+  font-weight: 700;
+  color: var(--primary-dark);
 }
 
 .navbar-left h1 {

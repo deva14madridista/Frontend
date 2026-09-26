@@ -2,9 +2,7 @@
   <aside class="sidebar">
 
     <!-- Logo -->
-    <div class="logo">
-      Eduabsen
-    </div>
+  
 
     <!-- Navigation -->
     <nav class="menu">
@@ -16,6 +14,14 @@
         </svg>
         <span>Dashboard</span>
       </NuxtLink>
+
+      <!-- Perjalanan Dinas -->
+    <NuxtLink to="/perjalanan-dinas" class="menu-item">
+      <svg viewBox="0 0 24 24" class="menu-icon">
+        <path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5L21 16Z"/>
+      </svg>
+      <span>Perjalanan Dinas</span>
+    </NuxtLink>
 
       <!-- Pengajuan -->
       <NuxtLink to="/pengajuan-perjalanan" class="menu-item">
@@ -91,7 +97,8 @@
 .menu {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 8px;
+  margin-top: 30px;
 }
 
 .menu-item {

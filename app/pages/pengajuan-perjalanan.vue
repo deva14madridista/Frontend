@@ -12,11 +12,12 @@
 
     <!-- Page Title -->
     <div class="page-title">
-      <NuxtLink to="/dashboard" class="back-icon">
-        ←
-      </NuxtLink>
+      <div class="back">
+      
+      <h1><NuxtLink to="/dashboard" class="back-icon">←             Pengajuan Perjalanan Dinas</NuxtLink></h1>
+      </div>
+      <LayoutPageactions />
 
-      <h1>Pengajuan Perjalanan Dinas</h1>
     </div>
 
     <!-- Form Card -->
@@ -218,6 +219,7 @@
 .page-title {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 9px;
 
   margin-bottom: 24px;

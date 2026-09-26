@@ -8,15 +8,7 @@
         <p>Selamat datang kembali, Deva Fauzan Nuraqli</p>
       </div>
 
-      <div class="header-actions">
-        <button type="button" title="Notifikasi">
-          ♧
-        </button>
-
-        <button type="button" title="Bantuan">
-          ?
-        </button>
-      </div>
+      <LayoutPageactions />
     </div>
 
     <!-- Summary Cards -->
@@ -88,35 +80,6 @@
   margin: 5px 0 0;
   font-size: 12px;
   color: var(--text-muted);
-}
-
-.header-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.header-actions button {
-  width: 38px;
-  height: 38px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border: 1px solid var(--border);
-  border-radius: 50%;
-
-  background: var(--white);
-  color: var(--text);
-
-  font-size: 14px;
-  cursor: pointer;
-
-  transition: 0.2s;
-}
-
-.header-actions button:hover {
-  background: #f0f3f8;
 }
 
 /* =========================
