@@ -266,7 +266,7 @@
 .form-content h2 {
   margin: 0 0 22px;
 
-  font-size: 15px;
+  font-size: 25px;
   font-weight: 700;
 
   color: var(--text);
@@ -300,7 +300,7 @@
 }
 
 .form-group label {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text);
 }
