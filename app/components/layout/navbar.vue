@@ -26,7 +26,7 @@
         </div>
 
         <div class="profile-info">
-          <strong>Deva Fauzan Nuraqlix</strong>
+          <strong>Deva Fauzan Nuraqli</strong>
           <span>Administrator</span>
         </div>
       </div>
