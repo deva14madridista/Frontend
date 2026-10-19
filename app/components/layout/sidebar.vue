@@ -98,7 +98,6 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 30px;
 }
 
 .menu-item {

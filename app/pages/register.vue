@@ -1,13 +1,9 @@
+
 <template>
   <div class="register-page">
-
-    <!-- =========================
-         LEFT BRAND SECTION
-    ========================== -->
+    <!-- LEFT BRAND SECTION -->
     <section class="brand-section">
-
       <div class="brand-content">
-
         <img
           src="~/assets/image/eduabsen.png"
           alt="Eduabsen"
@@ -15,228 +11,172 @@
         />
 
         <p class="brand-description">
-          Kelola perjalanan dinas menjadi lebih
-          mudah, cepat, dan terorganisir.
+          Kelola perjalanan dinas menjadi lebih mudah,
+          cepat, dan terorganisir.
         </p>
-
       </div>
 
       <p class="copyright">
-        © 2026 CTMS. All rights reserved.
+        © 2026 Eduabsen. All rights reserved.
       </p>
-
     </section>
 
-
-    <!-- =========================
-         RIGHT REGISTER SECTION
-    ========================== -->
+    <!-- RIGHT REGISTER SECTION -->
     <section class="form-section">
+      <!-- BACK TO DASHBOARD -->
+      <NuxtLink to="/dashboard" class="back-home">
+        <span class="back-arrow">←</span>
+        Kembali ke Dashboard
+      </NuxtLink>
 
       <div class="register-form">
-
         <!-- HEADER -->
         <div class="form-header">
-
-          <h2>Buat Akun Baru</h2>
-
-          <p>
-            Daftar untuk mulai mengelola perjalanan dinas
-          </p>
-
+          <h1>Buat Akun Baru</h1>
+          <p>Daftar untuk mulai mengelola perjalanan dinas</p>
         </div>
-
 
         <!-- FORM -->
         <form @submit.prevent="register">
-
           <!-- NAMA LENGKAP -->
           <div class="form-group">
-
-            <label>
-              Nama Lengkap
-              <span>*</span>
-            </label>
-
+            <label for="name">Nama Lengkap <span>*</span></label>
             <input
+              id="name"
               v-model="form.name"
               type="text"
-              placeholder="masukkan nama lengkap"
+              placeholder="Masukkan nama lengkap"
+              autocomplete="name"
+              required
             />
-
           </div>
-
 
           <!-- EMAIL -->
           <div class="form-group">
-
-            <label>
-              Email
-              <span>*</span>
-            </label>
-
+            <label for="email">Email <span>*</span></label>
             <input
+              id="email"
               v-model="form.email"
               type="email"
-              placeholder="masukkan email"
+              placeholder="Masukkan email"
+              autocomplete="email"
+              required
             />
-
           </div>
-
 
           <!-- NOMOR TELEPON -->
           <div class="form-group">
-
-            <label>
-              Nomor Telepon
-              <span>*</span>
-            </label>
-
+            <label for="phone">Nomor Telepon <span>*</span></label>
             <input
+              id="phone"
               v-model="form.phone"
               type="tel"
-              placeholder="masukkan nomor telepon"
+              placeholder="Masukkan nomor telepon"
+              autocomplete="tel"
+              required
             />
-
           </div>
-
 
           <!-- DEPARTEMEN -->
           <div class="form-group">
-
-            <label>
-              Departemen
-              <span>*</span>
-            </label>
-
-            <select v-model="form.department">
-
-              <option
-                value=""
-                disabled
-              >
-                Pilih departemen
-              </option>
-
-              <option value="Marketing">
-                Marketing
-              </option>
-
-              <option value="Sales">
-                Sales
-              </option>
-
-              <option value="HRD">
-                HRD
-              </option>
-
-              <option value="Finance">
-                Finance
-              </option>
-
-              <option value="IT">
-                IT
-              </option>
-
+            <label for="department">Departemen <span>*</span></label>
+            <select
+              id="department"
+              v-model="form.department"
+              required
+            >
+              <option value="" disabled>Pilih departemen</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Sales">Sales</option>
+              <option value="HRD">HRD</option>
+              <option value="Finance">Finance</option>
+              <option value="IT">IT</option>
             </select>
-
           </div>
-
 
           <!-- PASSWORD -->
           <div class="form-group">
-
-            <label>
-              Password
-              <span>*</span>
-            </label>
+            <label for="password">Password <span>*</span></label>
 
             <div class="password-input">
-
               <input
+                id="password"
                 v-model="form.password"
                 :type="showPassword ? 'text' : 'password'"
-                placeholder="buat password"
+                placeholder="Buat password"
+                autocomplete="new-password"
+                minlength="8"
+                required
               />
 
               <button
                 type="button"
+                class="password-toggle"
+                :aria-label="showPassword ? 'Sembunyikan password' : 'Tampilkan password'"
                 @click="showPassword = !showPassword"
               >
                 {{ showPassword ? '◉' : '◌' }}
               </button>
-
             </div>
 
+            <small class="input-hint">Minimal 8 karakter.</small>
           </div>
-
 
           <!-- KONFIRMASI PASSWORD -->
           <div class="form-group">
-
-            <label>
-              Konfirmasi Password
-              <span>*</span>
+            <label for="confirmPassword">
+              Konfirmasi Password <span>*</span>
             </label>
 
             <div class="password-input">
-
               <input
+                id="confirmPassword"
                 v-model="form.confirmPassword"
                 :type="showConfirmPassword ? 'text' : 'password'"
-                placeholder="ulangi password"
+                placeholder="Ulangi password"
+                autocomplete="new-password"
+                minlength="8"
+                required
               />
 
               <button
                 type="button"
+                class="password-toggle"
+                :aria-label="showConfirmPassword ? 'Sembunyikan password' : 'Tampilkan password'"
                 @click="showConfirmPassword = !showConfirmPassword"
               >
                 {{ showConfirmPassword ? '◉' : '◌' }}
               </button>
-
             </div>
-
           </div>
-
 
           <!-- SYARAT DAN KETENTUAN -->
           <label class="agreement">
-
             <input
               v-model="form.agreement"
               type="checkbox"
+              required
             />
 
             <span>
               Saya menyetujui
-              <a href="#">
-                Syarat & Ketentuan
+              <a href="#" @click.prevent="showTerms">
+                Syarat &amp; Ketentuan
               </a>
             </span>
-
           </label>
 
-
-          <!-- BUTTON DAFTAR -->
-          <button
-            type="submit"
-            class="register-button"
-          >
+          <!-- REGISTER BUTTON -->
+          <button type="submit" class="register-button">
             Daftar
           </button>
 
-
           <!-- DIVIDER -->
           <div class="divider">
-
             <span></span>
-
             <p>atau daftar dengan</p>
-
             <span></span>
-
           </div>
-
 
           <!-- GOOGLE -->
           <button
@@ -244,47 +184,27 @@
             class="google-button"
             @click="registerWithGoogle"
           >
-
             <strong>G</strong>
-
             Daftar dengan Google
-
           </button>
-
 
           <!-- LOGIN -->
           <p class="login-text">
-
             Sudah punya akun?
-
-            <NuxtLink to="/login">
-              Masuk
-            </NuxtLink>
-
+            <NuxtLink to="/login">Masuk</NuxtLink>
           </p>
-
         </form>
-
       </div>
-
     </section>
-
   </div>
 </template>
 
-
 <script setup>
+import { reactive, ref } from 'vue'
 
 definePageMeta({
   layout: 'auth'
 })
-
-import { reactive, ref } from 'vue'
-
-
-/* =========================
-   FORM DATA
-========================= */
 
 const form = reactive({
   name: '',
@@ -296,49 +216,12 @@ const form = reactive({
   agreement: false
 })
 
-
-/* =========================
-   PASSWORD VISIBILITY
-========================= */
-
 const showPassword = ref(false)
-
 const showConfirmPassword = ref(false)
 
-
-/* =========================
-   REGISTER
-========================= */
-
 const register = () => {
-
-  if (!form.name) {
-    alert('Nama lengkap wajib diisi.')
-    return
-  }
-
-  if (!form.email) {
-    alert('Email wajib diisi.')
-    return
-  }
-
-  if (!form.phone) {
-    alert('Nomor telepon wajib diisi.')
-    return
-  }
-
-  if (!form.department) {
-    alert('Departemen wajib dipilih.')
-    return
-  }
-
-  if (!form.password) {
-    alert('Password wajib diisi.')
-    return
-  }
-
-  if (!form.confirmPassword) {
-    alert('Konfirmasi password wajib diisi.')
+  if (form.password.length < 8) {
+    alert('Password harus minimal 8 karakter.')
     return
   }
 
@@ -348,565 +231,396 @@ const register = () => {
   }
 
   if (!form.agreement) {
-    alert('Silakan setujui Syarat & Ketentuan terlebih dahulu.')
+    alert('Silakan setujui Syarat & Ketentuan.')
     return
   }
 
-  console.log('Data Register:', form)
+  // Belum terhubung ke backend.
+  // Jangan menganggap akun sudah benar-benar dibuat.
+  console.log('Data formulir registrasi siap diproses:', {
+    name: form.name,
+    email: form.email,
+    phone: form.phone,
+    department: form.department
+  })
 
-  alert('Registrasi berhasil!')
+  alert('Form registrasi valid. Integrasi backend belum dilakukan.')
 }
-
-
-/* =========================
-   GOOGLE REGISTER
-========================= */
 
 const registerWithGoogle = () => {
-
-  console.log('Register dengan Google')
-
+  alert('Fitur registrasi Google belum diintegrasikan.')
 }
 
+const showTerms = () => {
+  alert('Syarat & Ketentuan belum tersedia.')
+}
 </script>
 
-
 <style scoped>
-
-/* =========================
-   REGISTER PAGE
-========================= */
-
+/* PAGE */
 .register-page {
   width: 100%;
   min-height: 100vh;
-
   display: flex;
-
-  background: #ffffff;
+  background: #fff;
 }
 
-
-/* =========================
-   LEFT BRAND SECTION
-========================= */
-
+/* LEFT BRAND */
 .brand-section {
-  width: 42%;
-
-  min-height: 100vh;
-
   position: relative;
-
+  width: 42%;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  background: #10192d;
-
-  color: #ffffff;
-
   box-sizing: border-box;
+  background: #10192d;
+  color: #fff;
 }
-
 
 .brand-content {
   width: 100%;
-
+  padding: 30px;
   display: flex;
   flex-direction: column;
   align-items: center;
-
   text-align: center;
-
-  padding: 30px;
 }
 
-
-/* =========================
-   EDUABSEN IMAGE
-========================= */
-
 .brand-image {
-  width: 270px;
-  height: auto;
-
   display: block;
-
+  width: 270px;
+  max-width: 100%;
+  height: auto;
   object-fit: contain;
 }
 
-
-/* =========================
-   DESCRIPTION
-========================= */
-
 .brand-description {
-  max-width: 280px;
-
+  max-width: 310px;
   margin: 25px 0 0;
-
-  color: #ffffff;
-
-  font-size: 11px;
-
+  color: #fff;
+  font-size: 14px;
   line-height: 1.6;
-
-  text-align: center;
 }
-
-
-/* =========================
-   COPYRIGHT
-========================= */
 
 .copyright {
   position: absolute;
-
+  right: 12px;
   bottom: 18px;
-
-  left: 0;
-  right: 0;
-
+  left: 12px;
   margin: 0;
-
   text-align: center;
-
-  color: #68748b;
-
-  font-size: 7px;
+  color: #8792a6;
+  font-size: 10px;
 }
 
-
-/* =========================
-   RIGHT FORM SECTION
-========================= */
-
+/* RIGHT FORM */
 .form-section {
+  position: relative;
   flex: 1;
-
+  min-width: 0;
   min-height: 100vh;
-
   display: flex;
-
   align-items: center;
-
   justify-content: center;
-
-  padding: 30px;
-
+  padding: 76px 32px 32px;
   box-sizing: border-box;
 }
-
 
 .register-form {
   width: 100%;
-
-  max-width: 390px;
+  max-width: 420px;
 }
 
+/* BACK TO DASHBOARD */
+.back-home {
+  position: absolute;
+  top: 26px;
+  left: 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s;
+}
 
-/* =========================
-   FORM HEADER
-========================= */
+.back-home:hover {
+  color: #2d6df6;
+}
 
+.back-arrow {
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* HEADER */
 .form-header {
-  margin-bottom: 18px;
+  margin-bottom: 22px;
 }
 
-
-.form-header h2 {
-  margin: 0 0 4px;
-
+.form-header h1 {
+  margin: 0 0 7px;
   color: #263248;
-
-  font-size: 28px;
-
+  font-size: 25px;
   font-weight: 700;
 }
 
-
 .form-header p {
   margin: 0;
-
-  color: #8a96a8;
-
+  color: #738096;
   font-size: 13px;
+  line-height: 1.5;
 }
 
-
-/* =========================
-   FORM GROUP
-========================= */
-
+/* INPUT GROUP */
 .form-group {
-  margin-bottom: 10px;
+  margin-bottom: 13px;
 }
 
-
-.form-group label {
+.form-group > label {
   display: block;
-
-  margin-bottom: 5px;
-
+  margin-bottom: 6px;
   color: #263248;
-
-  font-size: 12px;
-
+  font-size: 13px;
   font-weight: 600;
 }
 
-
-.form-group label span {
+.form-group > label span {
   color: #ef4444;
 }
 
-
-/* =========================
-   INPUT & SELECT
-========================= */
-
 .form-group input,
 .form-group select {
-
   width: 100%;
-  height: 30px;
-
+  height: 40px;
+  padding: 0 12px;
   box-sizing: border-box;
-
-  padding: 0 9px;
-
   border: 1px solid #dce3ec;
-
-  border-radius: 5px;
-
+  border-radius: 6px;
   outline: none;
-
-  background: #ffffff;
-
+  background: #fff;
   color: #263248;
-
   font-family: inherit;
-
-  font-size: 11px;
+  font-size: 13px;
 }
-
 
 .form-group input::placeholder {
   color: #a4afbe;
+  font-size: 12px;
 }
-
 
 .form-group input:focus,
 .form-group select:focus {
   border-color: #2d6df6;
+  box-shadow: 0 0 0 2px rgb(45 109 246 / 10%);
 }
 
-
-/* =========================
-   PASSWORD
-========================= */
-
+/* PASSWORD */
 .password-input {
   position: relative;
 }
 
-
 .password-input input {
-  padding-right: 35px;
+  padding-right: 42px;
 }
 
-
-.password-input button {
+.password-toggle {
   position: absolute;
-
   top: 50%;
-  right: 8px;
-
+  right: 12px;
   transform: translateY(-50%);
-
   padding: 0;
-
   border: none;
-
   background: transparent;
-
-  color: #8b98aa;
-
+  color: #718096;
   cursor: pointer;
+  font-size: 15px;
+}
 
+.input-hint {
+  display: block;
+  margin-top: 4px;
+  color: #8b96a7;
   font-size: 11px;
 }
 
-
-/* =========================
-   AGREEMENT
-========================= */
-
+/* AGREEMENT */
 .agreement {
-
   display: flex;
-
   align-items: center;
-
-  gap: 6px;
-
-  margin: 3px 0 12px;
-
-  color: #718096;
-
-  font-size: 10px;
-
+  gap: 8px;
+  margin: 4px 0 15px;
+  color: #596579;
+  font-size: 12px;
+  line-height: 1.5;
   cursor: pointer;
 }
-
 
 .agreement input {
-
-  width: 10px;
-  height: 10px;
-
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
   margin: 0;
-
+  accent-color: #2d6df6;
 }
-
-
-/* =========================
-   AGREEMENT LINK
-========================= */
 
 .agreement a {
-
   color: #2d6df6;
-
+  font-weight: 600;
   text-decoration: none;
-
-  font-weight: 600;
-
 }
 
-
-/* =========================
-   REGISTER BUTTON
-========================= */
-
+/* REGISTER BUTTON */
 .register-button {
-
   width: 100%;
-  height: 31px;
-
+  min-height: 42px;
   border: none;
-
-  border-radius: 5px;
-
+  border-radius: 6px;
   background: #2d6df6;
-
-  color: #ffffff;
-
+  color: #fff;
   font-family: inherit;
-
-  font-size: 12px;
-
+  font-size: 13px;
   font-weight: 600;
-
   cursor: pointer;
-
-  transition: 0.2s;
+  transition: background 0.2s;
 }
-
 
 .register-button:hover {
   background: #2460df;
 }
 
-
-/* =========================
-   DIVIDER
-========================= */
-
+/* DIVIDER */
 .divider {
-
   display: flex;
-
   align-items: center;
-
-  gap: 8px;
-
-  margin: 12px 0;
+  gap: 10px;
+  margin: 16px 0;
 }
-
 
 .divider span {
-
   flex: 1;
-
   height: 1px;
-
   background: #e5e9ef;
-
 }
-
 
 .divider p {
-
   margin: 0;
-
-  color: #a0aaba;
-
-  font-size: 10px;
-
+  color: #8b96a7;
+  font-size: 11px;
+  white-space: nowrap;
 }
 
-
-/* =========================
-   GOOGLE BUTTON
-========================= */
-
+/* GOOGLE BUTTON */
 .google-button {
-
   width: 100%;
-  height: 30px;
-
+  min-height: 42px;
   display: flex;
-
   align-items: center;
-
   justify-content: center;
-
-  gap: 7px;
-
-  border: 1px solid #e1e5eb;
-
-  border-radius: 5px;
-
-  background: #ffffff;
-
-  color: #566274;
-
+  gap: 9px;
+  border: 1px solid #dce3ec;
+  border-radius: 6px;
+  background: #fff;
+  color: #344054;
   font-family: inherit;
-
-  font-size: 12px;
-
+  font-size: 13px;
   cursor: pointer;
-
-  transition: 0.2s;
+  transition: background 0.2s;
 }
-
 
 .google-button:hover {
   background: #f8fafc;
 }
 
-
 .google-button strong {
-
   color: #4285f4;
-
-  font-size: 12px;
-
+  font-size: 17px;
 }
 
-
-/* =========================
-   LOGIN
-========================= */
-
+/* LOGIN LINK */
 .login-text {
-
-  margin: 12px 0 0;
-
+  margin: 17px 0 0;
   text-align: center;
-
   color: #8b96a7;
-
-  font-size: 10px;
-
+  font-size: 12px;
 }
-
 
 .login-text a {
-
   color: #2d6df6;
-
-  text-decoration: none;
-
   font-weight: 600;
-
+  text-decoration: none;
 }
 
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .brand-section {
+    width: 35%;
+  }
 
-/* =========================
-   RESPONSIVE
-========================= */
+  .brand-image {
+    width: 220px;
+  }
 
-@media (max-width: 800px) {
+  .form-section {
+    padding-right: 24px;
+    padding-left: 24px;
+  }
+}
 
+@media (max-width: 700px) {
   .register-page {
     flex-direction: column;
   }
 
-
   .brand-section {
-
     width: 100%;
-
-    min-height: 250px;
-
+    min-height: 200px;
   }
 
-
-  .brand-image {
-    width: 210px;
+  .brand-content {
+    padding: 24px;
   }
-
-
-  .brand-description {
-    margin-top: 15px;
-  }
-
-
-  .copyright {
-    display: none;
-  }
-
-
-  .form-section {
-
-    min-height: auto;
-
-    padding: 30px 20px;
-
-  }
-
-}
-
-
-@media (max-width: 480px) {
-
-  .brand-section {
-    min-height: 220px;
-  }
-
 
   .brand-image {
     width: 180px;
   }
 
-
   .brand-description {
-    font-size: 10px;
+    max-width: 280px;
+    margin-top: 12px;
+    font-size: 12px;
   }
 
+  .copyright {
+    display: none;
+  }
 
   .form-section {
-    padding: 25px 18px;
+    min-height: auto;
+    padding: 78px 22px 32px;
   }
 
+  .back-home {
+    top: 24px;
+    left: 22px;
+  }
 
   .register-form {
-    max-width: 100%;
+    max-width: 460px;
   }
-
 }
 
+@media (max-width: 400px) {
+  .form-section {
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+
+  .form-header h1 {
+    font-size: 22px;
+  }
+}
 </style>
