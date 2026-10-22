@@ -82,6 +82,8 @@ const activities = [
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
   margin-bottom: 18px;
 }
 
@@ -135,6 +137,7 @@ const activities = [
 
 .activity-info {
   flex: 1;
+  min-width: 0;
 }
 
 .activity-info p {
@@ -142,6 +145,8 @@ const activities = [
   font-size: 11px;
   line-height: 1.4;
   color: var(--text);
+
+  overflow-wrap: anywhere;
 }
 
 .activity-status {
@@ -173,5 +178,56 @@ const activities = [
   font-size: 9px;
   color: var(--text-muted);
   text-align: right;
+}
+
+@media (max-width: 767px) {
+  .recent-activities {
+    margin-top: 18px;
+    padding: 16px;
+  }
+
+  .activity-item {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr);
+    column-gap: 12px;
+    row-gap: 7px;
+
+    align-items: start;
+
+    padding: 12px 0;
+  }
+
+  .activity-icon {
+    grid-row: 1 / 3;
+    margin-right: 0;
+  }
+
+  .activity-info {
+    grid-column: 2;
+  }
+
+  .activity-status {
+    grid-column: 2;
+    justify-self: start;
+
+    margin-right: 0;
+  }
+
+  .activity-time {
+    grid-column: 2;
+    width: auto;
+
+    text-align: left;
+  }
+}
+
+@media (max-width: 374px) {
+  .recent-activities {
+    padding: 12px;
+  }
+
+  .activity-info p {
+    font-size: 10.5px;
+  }
 }
 </style>    

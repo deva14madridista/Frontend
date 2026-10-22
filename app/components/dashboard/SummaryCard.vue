@@ -43,6 +43,7 @@ defineProps({
   align-items: center;
   gap: 16px;
 
+  min-width: 0;
   min-height: 92px;
   padding: 20px;
 
@@ -75,22 +76,45 @@ defineProps({
   display: flex;
   flex-direction: column;
   gap: 3px;
+
+  min-width: 0;
 }
 
 .card-title {
   margin: 0;
 
   font-size: 12px;
+  line-height: 1.35;
   color: var(--text-muted);
+
+  overflow-wrap: break-word;
 }
 
 .card-value {
   margin: 0;
 
-  font-size: 28px;
+  font-size: clamp(22px, 4vw, 28px);
   line-height: 1;
 
   font-weight: 700;
   color: var(--text);
+}
+
+@media (max-width: 540px) {
+  .summary-card {
+    gap: 12px;
+    min-height: 76px;
+    padding: 14px;
+  }
+
+  .card-icon {
+    width: 42px;
+    height: 42px;
+    font-size: 18px;
+  }
+
+  .card-title {
+    font-size: 11px;
+  }
 }
 </style>

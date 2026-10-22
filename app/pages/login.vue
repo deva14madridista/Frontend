@@ -508,15 +508,58 @@ const loginWithGoogle = () => {
     top: 24px;
     left: 20px;
   }
+
+  .form-group label {
+    font-size: 13px;
+  }
+
+  .form-group input {
+    height: 44px;
+    font-size: 16px;
+  }
+
+  .form-group input::placeholder {
+    font-size: 14px;
+  }
+
+  .password-toggle {
+    font-size: 16px;
+  }
+
+  .login-options {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .remember,
+  .forgot-password {
+    font-size: 12px;
+  }
+
+  .remember input {
+    width: 16px;
+    height: 16px;
+  }
+
+  .divider p,
+  .register-text {
+    font-size: 12px;
+  }
+
+  .google-button,
+  .login-button {
+    height: 46px;
+    font-size: 13px;
+  }
 }
 
 @media (max-width: 480px) {
   .brand-section {
-    min-height: 230px;
+    min-height: 220px;
   }
 
   .brand-image {
-    width: 190px;
+    width: 170px;
   }
 
   .brand-description {
@@ -525,7 +568,14 @@ const loginWithGoogle = () => {
   }
 
   .form-section {
-    padding: 75px 18px 30px;
+    padding: 72px 18px 30px;
+  }
+
+  .back-home {
+    top: 22px;
+    left: 18px;
+
+    font-size: 12px;
   }
 
   .form-header h1 {
@@ -534,6 +584,24 @@ const loginWithGoogle = () => {
 
   .login-form {
     max-width: 100%;
+  }
+}
+
+@media (max-width: 374px) {
+  .brand-section {
+    min-height: 190px;
+  }
+
+  .brand-image {
+    width: 150px;
+  }
+
+  .form-section {
+    padding: 66px 14px 26px;
+  }
+
+  .form-header h1 {
+    font-size: 22px;
   }
 }
 </style>

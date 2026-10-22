@@ -178,7 +178,8 @@
 
 <style scoped>
 .pengajuan-page {
-  min-height: 100vh;
+  width: 100%;
+  min-height: calc(100vh - 70px);
   padding: 24px 28px;
   background: #f5f6f8;
 }
@@ -190,6 +191,7 @@
 .breadcrumb {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 9px;
 
   margin-bottom: 4px;
@@ -220,6 +222,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 9px;
 
   margin-bottom: 24px;
@@ -227,6 +230,8 @@
 
 .page-title h1 {
   margin: 0;
+
+  min-width: 0;
 
   font-size: 22px;
   font-weight: 700;
@@ -237,13 +242,16 @@
 .back-icon {
   display: flex;
   align-items: center;
-  justify-content: center;
+
+  gap: 8px;
 
   color: var(--text);
   text-decoration: none;
 
-  font-size: 24px;
-  line-height: 1;
+  font-size: 22px;
+  line-height: 1.25;
+
+  overflow-wrap: anywhere;
 }
 
 /* =========================
@@ -503,37 +511,106 @@
 ========================= */
 
 @media (max-width: 900px) {
+  .pengajuan-page {
+    padding: 20px;
+  }
+
   .three-column {
     grid-template-columns: 1fr 1fr;
   }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 767px) {
   .pengajuan-page {
     padding: 16px;
   }
 
+  .page-title {
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
   .page-title h1 {
-    font-size: 20px;
+    font-size: 18px;
+  }
+
+  .back-icon {
+    font-size: 18px;
+  }
+
+  .form-content {
+    padding: 16px;
+  }
+
+  .form-content h2 {
+    font-size: 18px;
+    margin-bottom: 16px;
   }
 
   .form-row,
   .three-column {
     grid-template-columns: 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .form-group label {
+    font-size: 11px;
+  }
+
+  .input-with-icon span {
+    display: none;
+  }
+
+  .form-group input,
+  .form-group select {
+    min-height: 42px;
+    font-size: 16px;
+  }
+
+  .form-group textarea {
+    font-size: 16px;
+  }
+
+  .currency-input span {
+    font-size: 12px;
   }
 
   .file-input {
     align-items: flex-start;
     flex-direction: column;
+    gap: 8px;
+  }
+
+  .file-button {
+    min-height: 40px;
+    font-size: 12px;
+  }
+
+  .file-name {
+    font-size: 11px;
   }
 
   .form-footer {
     flex-direction: column-reverse;
+    padding: 12px 16px 16px;
   }
 
   .cancel-button,
   .submit-button {
     width: 100%;
+    min-height: 44px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 374px) {
+  .pengajuan-page {
+    padding: 12px;
+  }
+
+  .form-content {
+    padding: 14px;
   }
 }
 </style>

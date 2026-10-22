@@ -12,7 +12,7 @@
     <div class="page-header">
       <h1>Laporan Perjalanan</h1>
 
-      <LayoutPageActions />
+      <LayoutPageactions />
     </div>
 
     <!-- Filter -->
@@ -206,6 +206,52 @@
 
         </div>
 
+        <!-- Mobile cards (data & aksi sama dengan tabel desktop) -->
+        <div class="report-cards">
+          <article
+            v-for="report in reports"
+            :key="`card-${report.id}`"
+            class="report-card"
+          >
+            <div class="report-card-header">
+              <span class="report-card-number">Laporan #{{ report.id }}</span>
+              <span class="report-card-period">{{ report.period }}</span>
+            </div>
+
+            <h3 class="report-card-title">
+              {{ report.name }}
+            </h3>
+
+            <dl class="report-card-details">
+              <div>
+                <dt>Periode</dt>
+                <dd>{{ report.period }}</dd>
+              </div>
+
+              <div>
+                <dt>Tanggal Dibuat</dt>
+                <dd>{{ report.date }}</dd>
+              </div>
+            </dl>
+
+            <div class="report-card-actions">
+              <button
+                type="button"
+                @click="downloadReport(report)"
+              >
+                ↓ Download
+              </button>
+
+              <button
+                type="button"
+                @click="viewReport(report)"
+              >
+                ◉ Lihat
+              </button>
+            </div>
+          </article>
+        </div>
+
       </section>
 
     </div>
@@ -298,7 +344,8 @@ const viewReport = (report) => {
 ========================= */
 
 .report-page {
-  min-height: 100vh;
+  width: 100%;
+  min-height: calc(100vh - 70px);
 
   padding: 24px 28px;
 
@@ -342,6 +389,8 @@ const viewReport = (report) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
 
   margin-bottom: 20px;
 }
@@ -437,11 +486,11 @@ const viewReport = (report) => {
 }
 
 .summary-card {
+  min-width: 0;
   min-height: 78px;
 
   display: flex;
   align-items: center;
-
   gap: 12px;
 
   padding: 14px;
@@ -453,6 +502,10 @@ const viewReport = (report) => {
   border: 1px solid var(--border);
 
   border-radius: 9px;
+}
+
+.summary-card > div:last-child {
+  min-width: 0;
 }
 
 .summary-icon {
@@ -751,34 +804,225 @@ td:last-child {
 }
 
 /* =========================
+   MOBILE CARDS
+========================= */
+
+.report-cards {
+  display: none;
+}
+
+.report-card {
+  padding: 14px;
+
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.report-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  margin-bottom: 8px;
+}
+
+.report-card-number {
+  font-size: 10px;
+  color: #9aa4b5;
+}
+
+.report-card-period {
+  padding: 3px 7px;
+
+  border-radius: 4px;
+
+  background: #eef3ff;
+  color: var(--primary);
+
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.report-card-title {
+  margin: 0;
+
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--text);
+
+  overflow-wrap: anywhere;
+}
+
+.report-card-details {
+  display: grid;
+  gap: 7px;
+
+  margin: 12px 0;
+}
+
+.report-card-details > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.report-card-details dt {
+  font-size: 10px;
+  color: #8792a5;
+}
+
+.report-card-details dd {
+  margin: 0;
+
+  font-size: 11px;
+  color: var(--text);
+  text-align: right;
+}
+
+.report-card-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+
+  padding-top: 10px;
+  border-top: 1px solid #eef1f5;
+}
+
+.report-card-actions button {
+  min-height: 40px;
+
+  border: 1px solid var(--primary);
+  border-radius: 7px;
+
+  background: #f5f8ff;
+  color: var(--primary);
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.report-card-actions button:last-child {
+  background: var(--primary);
+  color: var(--white);
+}
+
+/* =========================
    RESPONSIVE
 ========================= */
 
 @media (max-width: 1000px) {
   .summary-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .report-content {
     grid-template-columns: 1fr;
   }
+
+  .report-page {
+    padding: 20px;
+  }
 }
 
-@media (max-width: 650px) {
+@media (max-width: 767px) {
   .report-page {
     padding: 16px;
   }
 
   .filter-section {
     flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .filter-section select {
+    flex: 1 1 150px;
+
+    min-width: 0;
+    height: 40px;
+
+    font-size: 16px;
   }
 
   .export-button {
+    flex: 1 1 100%;
+
+    justify-content: center;
+
+    height: 40px;
     margin-left: 0;
+
+    font-size: 12px;
+  }
+
+  .summary-grid {
+    gap: 10px;
+    margin-bottom: 18px;
+  }  .summary-card {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .summary-card h2 {
+    font-size: 15px;
+    overflow-wrap: anywhere;
+  }
+
+  .report-content {
+    gap: 14px;
+  }
+
+  .expense-card,
+  .history-card {
+    padding: 14px;
+  }
+
+  .table-wrapper {
+    display: none;
+  }
+
+  .report-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    margin-top: 14px;
+  }
+
+  .chart {
+    gap: 6px;
+  }
+}
+
+@media (max-width: 540px) {
+  .filter-section select {
+    flex: 1 1 100%;
+  }
+
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 374px) {
+  .report-page {
+    padding: 12px;
   }
 
   .summary-grid {
     grid-template-columns: 1fr;
+  }
+
+  .summary-card h2 {
+    font-size: 17px;
   }
 }
 </style>

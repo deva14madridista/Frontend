@@ -100,6 +100,7 @@ const trips = [
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
@@ -109,6 +110,8 @@ const trips = [
   border-radius: 4px;
   font-size: 10px;
   color: var(--primary);
+
+  overflow-wrap: anywhere;
 }
 
 .date {
@@ -122,9 +125,19 @@ const trips = [
   line-height: 1.5;
   color: var(--text);
 }
-@media (max-width: 700px) {
+@media (max-width: 1023px) {
   .upcoming-trips {
     width: 100%;
+  }
+}
+
+@media (max-width: 767px) {
+  .upcoming-trips {
+    padding: 16px;
+  }
+
+  .section-header {
+    margin-bottom: 12px;
   }
 }
 </style>

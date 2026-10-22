@@ -7,7 +7,7 @@
       type="button"
       aria-label="Notifikasi"
     >
-      <svg viewBox="0 0 24 24" class="action-icon">
+      <svg viewBox="0 0 24 24" class="action-icon" aria-hidden="true">
         <path
           d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22Zm7-6v-5a7 7 0 0 0-5.5-6.83V3a1.5 1.5 0 0 0-3 0v1.17A7 7 0 0 0 5 11v5l-2 2v1h18v-1l-2-2Z"
         />
@@ -20,7 +20,7 @@
       type="button"
       aria-label="Bantuan"
     >
-      <svg viewBox="0 0 24 24" class="action-icon">
+      <svg viewBox="0 0 24 24" class="action-icon" aria-hidden="true">
         <path
           d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Zm-1-5h2v2h-2v-2Zm1-9a4 4 0 0 0-4 4h2a2 2 0 1 1 3.41 1.41C12.64 12.06 11 12.9 11 15h2c0-1.16.48-1.55 1.41-2.34A3.99 3.99 0 0 0 12 6Z"
         />
@@ -34,7 +34,7 @@
 .page-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .action-button {
@@ -44,7 +44,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 10px;
+
+  flex-shrink: 0;
+
+  padding: 0;
 
   border: 1px solid var(--border);
   border-radius: 50%;
@@ -61,10 +64,21 @@
   background: #f5f6f8;
 }
 
+.action-button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
 .action-icon {
   width: 15px;
   height: 15px;
 
   fill: currentColor;
+}
+
+@media (max-width: 767px) {
+  .page-actions {
+    gap: 8px;
+  }
 }
 </style>

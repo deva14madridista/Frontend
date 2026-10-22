@@ -14,7 +14,7 @@
     <div class="page-header">
       <h1>Pengajuan Reimbursement</h1>
 
-      <LayoutPageActions />
+      <LayoutPageactions />
     </div>
 
     <!-- Form Card -->
@@ -229,7 +229,8 @@ const cancelForm = () => {
 ========================= */
 
 .reimbursement-page {
-  min-height: 100vh;
+  width: 100%;
+  min-height: calc(100vh - 70px);
 
   padding: 24px 28px;
 
@@ -273,6 +274,8 @@ const cancelForm = () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
 
   margin-bottom: 24px;
 }
@@ -583,25 +586,85 @@ form {
    RESPONSIVE
 ========================= */
 
-@media (max-width: 700px) {
+@media (max-width: 767px) {
   .reimbursement-page {
     padding: 16px;
   }
 
+  .page-header h1 {
+    font-size: 20px;
+  }
+
+  .form-card {
+    padding: 16px;
+  }
+
+  .form-card h2 {
+    font-size: 15px;
+    margin-bottom: 16px;
+  }
+
   .form-row {
     grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .form-group label {
+    font-size: 11px;
+  }
+
+  .form-group input,
+  .form-group select {
+    height: 40px;
+
+    font-size: 16px;
+  }
+
+  .form-group textarea {
+    font-size: 16px;
   }
 
   .upload-area {
     flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .file-button,
+  .no-file,
+  .file-name {
+    font-size: 11px;
+  }
+
+  .file-button {
+    height: 40px;
+    padding: 0 14px;
+  }
+
+  .file-name span {
+    max-width: 180px;
   }
 
   .form-actions {
     justify-content: stretch;
+    gap: 8px;
   }
 
   .form-actions button {
     flex: 1;
+
+    height: 44px;
+
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 374px) {
+  .reimbursement-page {
+    padding: 12px;
+  }
+
+  .form-card {
+    padding: 14px;
   }
 }
 </style>

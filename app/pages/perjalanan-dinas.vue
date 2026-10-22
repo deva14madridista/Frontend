@@ -130,6 +130,63 @@
 
       </div>
 
+      <!-- Mobile cards (data & aksi sama dengan tabel desktop) -->
+      <div class="trip-cards">
+        <article
+          v-for="(trip, index) in filteredTrips"
+          :key="`card-${trip.id}`"
+          class="trip-card"
+        >
+          <div class="trip-card-header">
+            <span class="trip-card-number">Perjalanan #{{ index + 1 }}</span>
+
+            <span
+              class="status-badge"
+              :class="trip.statusClass"
+            >
+              {{ trip.status }}
+            </span>
+          </div>
+
+          <a href="#" class="trip-card-title">
+            {{ trip.destination }}
+          </a>
+
+          <dl class="trip-card-details">
+            <div>
+              <dt>Tanggal Berangkat</dt>
+              <dd>{{ trip.startDate }}</dd>
+            </div>
+
+            <div>
+              <dt>Tanggal Kembali</dt>
+              <dd>{{ trip.endDate }}</dd>
+            </div>
+
+            <div>
+              <dt>Jenis Perjalanan</dt>
+              <dd>{{ trip.type }}</dd>
+            </div>
+          </dl>
+
+          <div class="trip-card-actions">
+            <button
+              class="detail-button"
+              type="button"
+            >
+              Detail
+            </button>
+          </div>
+        </article>
+
+        <p
+          v-if="filteredTrips.length === 0"
+          class="trip-empty"
+        >
+          Tidak ada perjalanan yang sesuai dengan filter.
+        </p>
+      </div>
+
       <!-- Table Footer -->
       <div class="table-footer">
 
@@ -241,7 +298,8 @@ const filteredTrips = computed(() => {
 ========================= */
 
 .perjalanan-page {
-  min-height: 100vh;
+  width: 100%;
+  min-height: calc(100vh - 70px);
   padding: 24px 28px;
   background: #f5f6f8;
 }
@@ -279,6 +337,8 @@ const filteredTrips = computed(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
 
   margin-bottom: 24px;
 }
@@ -470,7 +530,7 @@ tbody tr:last-child td {
 .destination {
   display: inline-block;
 
-  max-width: 70px;
+  max-width: 100%;
 
   color: #1769ff;
   text-decoration: none;
@@ -479,7 +539,7 @@ tbody tr:last-child td {
   font-weight: 600;
 
   line-height: 1.15;
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .destination:hover {
@@ -605,10 +665,112 @@ tbody tr:last-child td {
 }
 
 /* =========================
+   MOBILE CARDS
+========================= */
+
+.trip-cards {
+  display: none;
+}
+
+.trip-card {
+  padding: 14px;
+
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.trip-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  margin-bottom: 10px;
+}
+
+.trip-card-number {
+  font-size: 10px;
+  color: #9aa4b5;
+}
+
+.trip-card-title {
+  display: block;
+
+  color: #1769ff;
+
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.35;
+
+  overflow-wrap: anywhere;
+}
+
+.trip-card-details {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+
+  margin: 12px 0;
+}
+
+.trip-card-details > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.trip-card-details dt {
+  font-size: 10px;
+  color: #8792a5;
+}
+
+.trip-card-details dd {
+  margin: 0;
+
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text);
+  text-align: right;
+}
+
+.trip-card-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  padding-top: 10px;
+  border-top: 1px solid #eef1f5;
+}
+
+.trip-card-actions .detail-button {
+  width: 100%;
+  min-height: 40px;
+
+  border: 1px solid var(--primary);
+  border-radius: 7px;
+
+  background: #f5f8ff;
+}
+
+.trip-empty {
+  padding: 28px 16px;
+
+  text-align: center;
+  font-size: 12px;
+  color: #8792a5;
+}
+
+/* =========================
    RESPONSIVE
 ========================= */
 
-@media (max-width: 900px) {
+@media (max-width: 1023px) {
+  .perjalanan-page {
+    padding: 20px;
+  }
+
   .filter-card {
     grid-template-columns: 1fr 1fr;
   }
@@ -616,15 +778,49 @@ tbody tr:last-child td {
   .search-group {
     grid-column: 1 / -1;
   }
+
+  table {
+    min-width: 0;
+    table-layout: fixed;
+  }
+
+  th {
+    padding: 9px 6px;
+  }
+
+  td {
+    padding: 11px 6px;
+    font-size: 9px;
+  }
+
+  .destination {
+    font-size: 9.5px;
+  }
+
+  .travel-type {
+    font-size: 9px;
+  }
+
+  .status-badge {
+    padding: 3px 7px;
+    font-size: 8.5px;
+  }
+
+  .detail-button {
+    font-size: 9px;
+  }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 767px) {
   .perjalanan-page {
     padding: 16px;
   }
 
   .filter-card {
     grid-template-columns: 1fr;
+    padding: 14px;
+    gap: 12px;
+    margin-bottom: 16px;
   }
 
   .search-group {
@@ -635,12 +831,58 @@ tbody tr:last-child td {
     font-size: 20px;
   }
 
+  .filter-group input,
+  .filter-group select {
+    font-size: 16px;
+  }
+
+  .date-input svg {
+    display: none;
+  }
+
   .table-wrapper {
+    display: none;
+  }
+
+  .table-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+
+    padding: 0 14px 14px;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+  }
+
+  .page-button {
+    width: 36px;
+    height: 36px;
+  }
+
+  .trip-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    padding: 14px;
+  }
+
+  .table-card {
+    border: none;
+    background: transparent;
+    overflow: visible;
+  }
+}
+
+@media (max-width: 374px) {
+  .perjalanan-page {
     padding: 12px;
   }
 
-  table {
-    min-width: 800px;
+  .trip-cards {
+    padding: 10px;
   }
 }
 </style>

@@ -24,11 +24,30 @@
   box-sizing: border-box;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 html,
 body {
   font-family: 'Inter', sans-serif;
   background: var(--background);
   color: var(--text);
+}
+
+body {
+  min-height: 100vh;
+}
+
+#__nuxt {
+  min-height: 100vh;
+}
+
+img,
+svg,
+video {
+  max-width: 100%;
 }
 
 button,
@@ -38,7 +57,15 @@ select {
   font-family: inherit;
 }
 
+button {
+  touch-action: manipulation;
+}
+
 a {
   text-decoration: none;
   color: inherit;
+}
+
+:focus-visible {
+  outline-offset: 2px;
 }

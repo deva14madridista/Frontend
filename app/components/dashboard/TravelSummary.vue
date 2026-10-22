@@ -58,6 +58,7 @@ const monthlyData = [
 <style scoped>
 .travel-summary {
   flex: 1;
+  min-width: 0;
 
   padding: 20px;
 
@@ -113,6 +114,7 @@ const monthlyData = [
 
 .chart-item {
   flex: 1;
+  min-width: 0;
   height: 100%;
 
   display: flex;
@@ -134,6 +136,7 @@ const monthlyData = [
 
 .bar {
   width: 18px;
+  max-width: 100%;
 
   max-height: 140px;
 
@@ -147,5 +150,42 @@ const monthlyData = [
 .month {
   font-size: 10px;
   color: var(--text-muted);
+}
+
+@media (max-width: 767px) {
+  .travel-summary {
+    padding: 16px;
+  }
+
+  .chart {
+    gap: 6px;
+    margin-top: 18px;
+  }
+
+  .bar {
+    width: 12px;
+  }
+
+  .month {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 374px) {
+  .travel-summary {
+    padding: 14px;
+  }
+
+  .chart {
+    gap: 4px;
+  }
+
+  .bar {
+    width: 9px;
+  }
+
+  .month {
+    font-size: 8px;
+  }
 }
 </style>

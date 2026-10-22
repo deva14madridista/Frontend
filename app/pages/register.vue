@@ -611,6 +611,38 @@ const showTerms = () => {
   .register-form {
     max-width: 460px;
   }
+
+  .form-group > label {
+    font-size: 14px;
+  }
+
+  .form-group input,
+  .form-group select {
+    height: 44px;
+    font-size: 16px;
+  }
+
+  .form-group input::placeholder {
+    font-size: 14px;
+  }
+
+  .input-hint,
+  .agreement,
+  .login-text,
+  .divider p {
+    font-size: 13px;
+  }
+
+  .agreement input {
+    width: 16px;
+    height: 16px;
+  }
+
+  .register-button,
+  .google-button {
+    min-height: 46px;
+    font-size: 14px;
+  }
 }
 
 @media (max-width: 400px) {

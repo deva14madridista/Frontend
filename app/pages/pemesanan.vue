@@ -12,7 +12,7 @@
     <div class="page-header">
       <h1>Pemesanan Perjalanan</h1>
 
-      <LayoutPageActions />
+      <LayoutPageactions />
     </div>
 
     <!-- Booking Tabs -->
@@ -134,25 +134,25 @@
             </div>
 
             <!-- Departure -->
-            <div class="flight-time">
+            <div class="flight-time" data-label="Berangkat">
               <strong>{{ flight.departure }}</strong>
               <span>{{ flight.fromCode }}</span>
             </div>
 
             <!-- Duration -->
-            <div class="flight-duration">
+            <div class="flight-duration" data-label="Durasi">
               <span>{{ flight.duration }}</span>
               <small>Langsung</small>
             </div>
 
             <!-- Arrival -->
-            <div class="flight-time">
+            <div class="flight-time" data-label="Tiba">
               <strong>{{ flight.arrival }}</strong>
               <span>{{ flight.toCode }}</span>
             </div>
 
             <!-- Price -->
-            <div class="flight-price">
+            <div class="flight-price" data-label="Harga">
               {{ flight.price }}
             </div>
 
@@ -284,7 +284,8 @@ const chooseFlight = (flight) => {
 ========================= */
 
 .booking-page {
-  min-height: 100vh;
+  width: 100%;
+  min-height: calc(100vh - 70px);
 
   padding: 24px 28px;
 
@@ -325,6 +326,8 @@ const chooseFlight = (flight) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
 
   margin-bottom: 20px;
 }
@@ -788,33 +791,225 @@ const chooseFlight = (flight) => {
    RESPONSIVE
 ========================= */
 
-@media (max-width: 900px) {
+@media (max-width: 1023px) {
+  .booking-page {
+    padding: 20px;
+  }
+
   .search-card {
     grid-template-columns: 1fr 1fr;
   }
 
   .flight-item {
-    min-width: 750px;
+    grid-template-columns:
+      minmax(0, 1.6fr)
+      minmax(0, 0.8fr)
+      minmax(0, 0.8fr)
+      minmax(0, 0.8fr)
+      minmax(0, 0.9fr)
+      60px;
+
+    gap: 10px;
+    padding: 0 12px;
   }
 
-  .flight-list {
-    overflow-x: auto;
+  .airline-info {
+    gap: 8px;
+  }
+
+  .airline-info strong {
+    font-size: 10px;
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 767px) {
   .booking-page {
     padding: 16px;
   }
 
+  .page-header h1 {
+    font-size: 20px;
+  }
+
+  .booking-tabs {
+    gap: 16px;
+
+    height: auto;
+    min-height: 44px;
+
+    margin-bottom: 18px;
+
+    overflow-x: auto;
+  }
+
+  .booking-tab {
+    height: 44px;
+
+    flex-shrink: 0;
+
+    font-size: 12px;
+  }
+
   .search-card {
     grid-template-columns: 1fr;
+    gap: 12px;
+
+    padding: 14px;
+    margin-bottom: 18px;
+  }
+
+  .form-group label {
+    font-size: 11px;
+  }
+
+  .date-input span {
+    display: none;
+  }
+
+  .form-group input,
+  .form-group select {
+    height: 40px;
+
+    font-size: 16px;
   }
 
   .search-button {
     grid-column: auto;
-
     justify-self: stretch;
+
+    height: 44px;
+
+    font-size: 13px;
+  }
+
+  /* Flight list menjadi card */
+  .flight-list {
+    overflow-x: visible;
+    gap: 12px;
+  }
+
+  .flight-item {
+    display: grid;
+
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "airline airline"
+      "departure arrival"
+      "duration duration"
+      "price choose";
+
+    align-items: center;
+    gap: 10px 12px;
+
+    min-width: 0;
+    min-height: 0;
+
+    padding: 14px;
+  }
+
+  .airline-info {
+    grid-area: airline;
+
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eef1f5;
+  }
+
+  .airline-info strong {
+    font-size: 13px;
+  }
+
+  .flight-item > .flight-time:nth-child(2) {
+    grid-area: departure;
+  }
+
+  .flight-item > .flight-time:nth-child(4) {
+    grid-area: arrival;
+  }
+
+  .flight-duration {
+    grid-area: duration;
+
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+
+    padding: 2px 0;
+  }
+
+  .flight-item > .flight-time,
+  .flight-duration {
+    align-items: flex-start;
+  }
+
+  .flight-item > .flight-time::before,
+  .flight-duration::before,
+  .flight-price::before {
+    content: attr(data-label);
+
+    margin-bottom: 2px;
+
+    font-size: 9px;
+    font-weight: 600;
+    color: #9aa4b5;
+  }
+
+  .flight-duration::before {
+    margin-bottom: 0;
+  }
+
+  .flight-item > .flight-time strong {
+    font-size: 15px;
+  }
+
+  .flight-time span,
+  .flight-duration span,
+  .flight-duration small {
+    font-size: 10px;
+  }
+
+  .flight-price {
+    grid-area: price;
+
+    display: flex;
+    flex-direction: column;
+
+    text-align: left;
+
+    font-size: 13px;
+  }
+
+  .choose-button {
+    grid-area: choose;
+
+    min-width: 90px;
+    min-height: 42px;
+
+    font-size: 12px;
+  }
+
+  .price-note {
+    font-size: 10px;
+  }
+
+  .empty-booking {
+    min-height: 200px;
+
+    padding: 24px 16px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 374px) {
+  .booking-page {
+    padding: 12px;
+  }
+
+  .flight-item {
+    padding: 12px;
+  }
+
+  .choose-button {
+    min-width: 78px;
   }
 }
 </style>

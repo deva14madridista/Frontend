@@ -12,7 +12,7 @@
     <div class="page-header">
       <h1>Pengaturan Akun</h1>
 
-      <LayoutPageActions />
+      <LayoutPageactions />
     </div>
 
     <!-- Content -->
@@ -74,7 +74,11 @@
             </div>
 
             <button
-              class="toggle active"
+              class="toggle"
+              type="button"
+              role="switch"
+              aria-label="Notifikasi Email"
+              :aria-checked="emailNotification"
               @click="emailNotification = !emailNotification"
               :class="{ active: emailNotification }"
             >
@@ -96,6 +100,10 @@
 
             <button
               class="toggle"
+              type="button"
+              role="switch"
+              aria-label="Push Notification Persetujuan"
+              :aria-checked="pushNotification"
               @click="pushNotification = !pushNotification"
               :class="{ active: pushNotification }"
             >
@@ -117,6 +125,10 @@
 
             <button
               class="toggle"
+              type="button"
+              role="switch"
+              aria-label="Pengingat Perjalanan"
+              :aria-checked="travelReminder"
               @click="travelReminder = !travelReminder"
               :class="{ active: travelReminder }"
             >
@@ -138,6 +150,10 @@
 
             <button
               class="toggle"
+              type="button"
+              role="switch"
+              aria-label="Status Reimbursement"
+              :aria-checked="reimbursementNotification"
               @click="reimbursementNotification = !reimbursementNotification"
               :class="{ active: reimbursementNotification }"
             >
@@ -225,7 +241,8 @@ const reimbursementNotification = ref(false)
 ========================= */
 
 .settings-page {
-  min-height: 100vh;
+  width: 100%;
+  min-height: calc(100vh - 70px);
 
   padding: 24px 28px;
 
@@ -271,6 +288,8 @@ const reimbursementNotification = ref(false)
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
 
   margin-bottom: 24px;
 }
@@ -345,6 +364,8 @@ const reimbursementNotification = ref(false)
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
 
   margin-bottom: 20px;
 }
@@ -427,6 +448,8 @@ const reimbursementNotification = ref(false)
 .profile-detail {
   display: flex;
   flex-direction: column;
+
+  min-width: 0;
 }
 
 .profile-detail h3 {
@@ -438,6 +461,8 @@ const reimbursementNotification = ref(false)
   color: var(--text);
 
   font-weight: 700;
+
+  overflow-wrap: anywhere;
 }
 
 .profile-email {
@@ -446,12 +471,15 @@ const reimbursementNotification = ref(false)
   font-size: 9px;
 
   color: #8792a5;
+
+  overflow-wrap: anywhere;
 }
 
 .profile-tags {
   display: flex;
 
   align-items: center;
+  flex-wrap: wrap;
 
   gap: 6px;
 }
@@ -566,6 +594,11 @@ const reimbursementNotification = ref(false)
   left: 17px;
 }
 
+.toggle:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
 
 /* =========================
    SECURITY
@@ -669,26 +702,109 @@ const reimbursementNotification = ref(false)
    RESPONSIVE
 ========================= */
 
-@media (max-width: 850px) {
+@media (max-width: 1023px) {
+  .settings-page {
+    padding: 20px;
+  }
+}
 
+@media (max-width: 850px) {
   .settings-grid {
     grid-template-columns: 1fr;
   }
-
 }
 
-@media (max-width: 600px) {
-
+@media (max-width: 767px) {
   .settings-page {
     padding: 16px;
   }
 
+  .page-header h1 {
+    font-size: 20px;
+  }
+
+  .settings-grid,
+  .left-column {
+    gap: 14px;
+  }
+
+  .settings-card {
+    padding: 16px;
+  }
+
+  .settings-card h2,
+  .card-header h2 {
+    font-size: 15px;
+  }
+
+  .edit-button {
+    height: 36px;
+    padding: 0 12px;
+    font-size: 11px;
+  }
+
+  .profile-info {
+    align-items: flex-start;
+  }
+
+  .profile-detail h3 {
+    font-size: 14px;
+  }
+
+  .profile-email,
+  .profile-tags span {
+    font-size: 10px;
+  }
+
   .notification-item {
     align-items: flex-start;
+    gap: 14px;
 
+    min-height: 0;
     padding: 14px 0;
   }
 
+  .notification-item h3 {
+    font-size: 12px;
+  }
+
+  .notification-item p {
+    font-size: 10px;
+    line-height: 1.5;
+  }
+
+  .form-group label {
+    font-size: 11px;
+  }
+
+  .form-group input {
+    height: 42px;
+    font-size: 16px;
+  }
+
+  .security-card {
+    min-height: 0;
+  }
+
+  .security-footer {
+    justify-content: stretch;
+    margin-top: 18px;
+  }
+
+  .save-button {
+    width: 100%;
+    height: 44px;
+    font-size: 13px;
+  }
 }
 
+@media (max-width: 374px) {
+  .settings-page {
+    padding: 12px;
+  }
+
+  .settings-card {
+    padding: 14px;
+  }
+}
 </style>

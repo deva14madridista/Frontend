@@ -12,7 +12,7 @@
     <div class="page-header">
       <h1>Persetujuan Perjalanan</h1>
 
-      <LayoutPageActions />
+      <LayoutPageactions />
     </div>
 
     <!-- Tabs -->
@@ -210,7 +210,8 @@ const rejectRequest = (request) => {
 ========================= */
 
 .approval-page {
-  min-height: 100vh;
+  width: 100%;
+  min-height: calc(100vh - 70px);
   padding: 24px 28px;
   background: #f5f6f8;
 }
@@ -248,6 +249,8 @@ const rejectRequest = (request) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
 
   margin-bottom: 20px;
 }
@@ -400,6 +403,7 @@ const rejectRequest = (request) => {
 .name-row {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 5px;
 }
 
@@ -532,27 +536,117 @@ const rejectRequest = (request) => {
    RESPONSIVE
 ========================= */
 
-@media (max-width: 700px) {
+@media (max-width: 767px) {
   .approval-page {
     padding: 16px;
   }
 
-  .approval-item {
-    align-items: flex-start;
-
-    padding: 16px 0;
-  }
-
-  .request-actions {
-    flex-direction: column;
-  }
-
-  .request-actions button {
-    width: 65px;
+  .page-header h1 {
+    font-size: 20px;
   }
 
   .tabs {
-    gap: 16px;
+    gap: 18px;
+
+    height: auto;
+    min-height: 40px;
+
+    margin-bottom: 18px;
+
+    overflow-x: auto;
+  }
+
+  .tabs button {
+    height: 40px;
+
+    flex-shrink: 0;
+
+    font-size: 11px;
+  }
+
+  .approval-card {
+    padding: 0 14px;
+  }
+
+  .approval-item {
+    display: grid;
+    grid-template-columns: 30px minmax(0, 1fr);
+    column-gap: 12px;
+
+    align-items: start;
+
+    min-height: 0;
+    padding: 16px 0;
+  }
+
+  .avatar {
+    grid-column: 1;
+  }
+
+  .request-info {
+    grid-column: 2;
+  }
+
+  .name-row h3 {
+    font-size: 12px;
+  }
+
+  .name-row span {
+    font-size: 10px;
+  }
+
+  .route {
+    font-size: 11px;
+  }
+
+  .purpose,
+  .date {
+    font-size: 10px;
+  }
+
+  .request-actions {
+    grid-column: 2;
+
+    flex-direction: row;
+    gap: 8px;
+
+    margin-top: 12px;
+  }
+
+  .request-actions button {
+    flex: 1;
+
+    width: auto;
+    min-height: 40px;
+
+    font-size: 12px;
+  }
+
+  .approval-footer {
+    flex-wrap: wrap;
+    gap: 10px;
+
+    margin-top: 18px;
+
+    font-size: 11px;
+  }
+
+  .approval-footer button {
+    min-height: 36px;
+
+    padding: 0 4px;
+
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 374px) {
+  .approval-page {
+    padding: 12px;
+  }
+
+  .approval-card {
+    padding: 0 12px;
   }
 }
 </style>    
