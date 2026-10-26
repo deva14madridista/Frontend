@@ -1,0 +1,138 @@
+<template>
+  <div class="atasan-page">
+    <div class="breadcrumb">
+      <span>Beranda</span><span>›</span><strong>Dashboard</strong>
+    </div>
+
+    <header class="page-header">
+      <div>
+        <h1>Dashboard Atasan</h1>
+        <p>Pantau pengajuan dan perjalanan dinas tim Anda.</p>
+      </div>
+      <label class="period-control">
+        <span>Periode</span>
+        <select v-model="period" aria-label="Periode dashboard">
+          <option value="bulan-ini">Bulan ini</option>
+          <option value="kuartal-ini">Kuartal ini</option>
+          <option value="tahun-ini">Tahun ini</option>
+        </select>
+      </label>
+    </header>
+
+    <AtasanDataNotice
+      message="Dashboard belum terhubung dengan API perjalanan dan persetujuan. Angka tidak ditampilkan sebagai data produksi."
+    />
+
+    <section class="metrics" aria-label="Ringkasan perjalanan tim">
+      <AtasanMetricCard title="Pengajuan Perjalanan Tim" value="—" icon="▤" />
+      <AtasanMetricCard title="Menunggu Persetujuan" value="—" icon="◷" />
+      <AtasanMetricCard title="Perjalanan Berlangsung" value="—" icon="➤" />
+      <AtasanMetricCard title="Perjalanan Selesai" value="—" icon="✓" />
+    </section>
+
+    <section class="content-grid">
+      <article class="panel">
+        <div class="panel-heading">
+          <div>
+            <h2>Pengajuan Menunggu Persetujuan</h2>
+            <p>Pengajuan yang berada dalam kewenangan Anda.</p>
+          </div>
+          <NuxtLink to="/atasan/persetujuan" class="text-link">Lihat semua</NuxtLink>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Pegawai</th>
+                <th>Tujuan / Keperluan</th>
+                <th>Tanggal</th>
+                <th>Estimasi Biaya</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-if="pendingRequests.length === 0">
+                <td colspan="6" class="empty-cell">
+                  Belum ada data pengajuan untuk ditampilkan.
+                </td>
+              </tr>
+              <tr v-for="request in pendingRequests" :key="request.id">
+                <td>{{ request.employee }}</td>
+                <td>{{ request.destination }}</td>
+                <td>{{ request.date }}</td>
+                <td>{{ request.estimate }}</td>
+                <td><span class="status pending">{{ request.status }}</span></td>
+                <td><NuxtLink :to="`/atasan/persetujuan/${request.id}`" class="text-link">Detail</NuxtLink></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <aside class="side-panels">
+        <article class="panel">
+          <div class="panel-heading">
+            <div><h2>Keputusan Terbaru</h2><p>Riwayat keputusan pengajuan.</p></div>
+          </div>
+          <div class="empty-state">Belum ada keputusan yang dapat ditampilkan.</div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-heading">
+            <div><h2>Perjalanan Tim Saat Ini</h2><p>Perjalanan yang sedang berlangsung.</p></div>
+          </div>
+          <div class="empty-state">Belum ada data perjalanan aktif.</div>
+          <NuxtLink to="/atasan/perjalanan-tim" class="text-link">Buka perjalanan tim</NuxtLink>
+        </article>
+      </aside>
+    </section>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+
+definePageMeta({ layout: 'atasan' })
+
+interface PendingRequest {
+  id: string
+  employee: string
+  destination: string
+  date: string
+  estimate: string
+  status: string
+}
+
+const period = ref('bulan-ini')
+const pendingRequests = ref<PendingRequest[]>([])
+</script>
+
+<style scoped>
+.atasan-page { min-height: calc(100vh - 70px); padding: 26px 28px; background: #f5f6f8; }
+.breadcrumb { display: flex; gap: 9px; margin-bottom: 8px; color: #8792a3; font-size: 11px; }
+.breadcrumb strong { color: var(--text); font-weight: 600; }
+.page-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; margin-bottom: 18px; }
+.page-header h1 { margin: 0; color: var(--text); font-size: 24px; }
+.page-header p, .panel-heading p { margin: 6px 0 0; color: var(--text-muted); font-size: 12px; }
+.period-control { display: flex; flex-direction: column; gap: 6px; color: var(--text-muted); font-size: 11px; }
+.period-control select, .filters input, .filters select { min-height: 38px; padding: 0 11px; border: 1px solid var(--border); border-radius: 7px; background: var(--white); color: var(--text); font: inherit; }
+.metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 18px 0; }
+.content-grid { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(250px, 0.85fr); gap: 16px; }
+.panel { min-width: 0; padding: 18px; border: 1px solid var(--border); border-radius: 10px; background: var(--white); }
+.panel-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 16px; }
+.panel-heading h2 { margin: 0; color: var(--text); font-size: 14px; }
+.text-link { color: var(--primary); font-size: 11px; font-weight: 600; white-space: nowrap; }
+.table-wrap { width: 100%; overflow-x: auto; }
+table { width: 100%; min-width: 650px; border-collapse: collapse; text-align: left; }
+th { padding: 11px 9px; background: #f8fafc; color: #788397; font-size: 10px; font-weight: 600; }
+td { padding: 13px 9px; border-bottom: 1px solid #edf0f4; color: var(--text); font-size: 11px; }
+.empty-cell { height: 92px; color: var(--text-muted); text-align: center; }
+.status { padding: 5px 8px; border-radius: 20px; background: #fff5dc; color: #9a6a08; font-size: 10px; white-space: nowrap; }
+.side-panels { display: grid; gap: 16px; align-content: start; }
+.empty-state { padding: 14px 0 18px; color: var(--text-muted); font-size: 11px; }
+@media (max-width: 1100px) { .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } .content-grid { grid-template-columns: 1fr; } .side-panels { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 650px) { .atasan-page { padding: 18px 15px; } .page-header { align-items: flex-start; flex-direction: column; } .page-header h1 { font-size: 21px; } .metrics { gap: 10px; } .side-panels { grid-template-columns: 1fr; } }
+@media (max-width: 390px) { .metrics { grid-template-columns: 1fr; } }
+</style>

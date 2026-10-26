@@ -15,55 +15,80 @@
         </svg>
       </button>
 
-      <NuxtLink
-        to="/dashboard"
-        class="navbar-brand"
-        aria-label="Eduabsen Travel App - Dashboard"
-      >
-        <img
-          src="~/assets/image/eduabsen.png"
-          alt="Eduabsen"
-          class="brand-logo"
-        />
+      <ClientOnly>
+        <NuxtLink
+          :to="homeRoute"
+          class="navbar-brand"
+          aria-label="Eduabsen Travel App - Dashboard"
+        >
+          <img
+            src="~/assets/image/eduabsen.png"
+            alt="Eduabsen"
+            class="brand-logo"
+          />
 
-        <div class="brand-text">
-          <span class="brand-name">Eduabsen</span>
-          <span class="brand-subtitle">Travel App</span>
-        </div>
-      </NuxtLink>
+          <div class="brand-text">
+            <span class="brand-name">Eduabsen</span>
+            <span class="brand-subtitle">Travel App</span>
+          </div>
+        </NuxtLink>
+        <template #fallback>
+          <div class="navbar-brand" aria-hidden="true">
+            <img
+              src="~/assets/image/eduabsen.png"
+              alt=""
+              class="brand-logo"
+            />
+            <div class="brand-text">
+              <span class="brand-name">Eduabsen</span>
+              <span class="brand-subtitle">Travel App</span>
+            </div>
+          </div>
+        </template>
+      </ClientOnly>
     </div>
 
     <!-- Kanan -->
     <div class="navbar-actions">
       <LayoutPageactions class="navbar-page-actions" />
 
-      <!-- Tombol Login dan Register -->
-      <div class="auth-buttons">
-        <NuxtLink to="/register" class="nav-register">
-          Register
-        </NuxtLink>
+      <ClientOnly>
+        <template v-if="!isMounted || !isAuthenticated">
+          <div class="auth-buttons">
+            <NuxtLink to="/admin/register" class="nav-register">Register</NuxtLink>
+            <NuxtLink to="/admin/login" class="nav-login">Login</NuxtLink>
+          </div>
+        </template>
 
-        <NuxtLink to="/login" class="nav-login">
-          Login
-        </NuxtLink>
-      </div>
-
-      <!-- Profil -->
-      <div class="profile">
-        <div class="profile-avatar">
-          D
-        </div>
-
-        <div class="profile-info">
-          <strong>Deva Fauzan Nuraqli</strong>
-          <span>Administrator</span>
-        </div>
-      </div>
+        <template v-else>
+          <div class="profile">
+            <div class="profile-avatar">{{ initials }}</div>
+            <div class="profile-info">
+              <strong>{{ userName }}</strong>
+              <span>{{ userRole }}</span>
+            </div>
+            <button
+              class="logout-button"
+              type="button"
+              @click="handleLogout"
+              aria-label="Keluar"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M17 7l-5 5 5 5M12 2v20M9 12h13" />
+              </svg>
+            </button>
+          </div>
+        </template>
+      </ClientOnly>
     </div>
   </header>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
+import { useAuth } from '~/composables/useAuth'
+import { ROLE_LABELS, ROLE_ROUTES } from '~/utils/nav'
+
 defineProps({
   sidebarOpen: {
     type: Boolean,
@@ -72,6 +97,22 @@ defineProps({
 })
 
 defineEmits(['toggle-sidebar'])
+
+const { user, isAuthenticated, logout, getInitials } = useAuth()
+const isMounted = ref(false)
+
+const userName = computed(() => user.value?.name || '')
+const userRole = computed(() => user.value ? ROLE_LABELS[user.value.role] : '')
+const initials = computed(() => user.value ? getInitials(user.value.name) : '')
+const homeRoute = computed(() => isMounted.value && user.value ? ROLE_ROUTES[user.value.role] : '/admin/login')
+
+const handleLogout = () => {
+  logout()
+}
+
+onMounted(() => {
+  isMounted.value = true
+})
 </script>
 
 <style scoped>
@@ -291,6 +332,52 @@ defineEmits(['toggle-sidebar'])
   color: var(--text-muted);
 }
 
+/* LOGOUT BUTTON */
+
+.logout-button {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  padding: 0;
+
+  border: 1px solid var(--border);
+  border-radius: 50%;
+
+  background: var(--white);
+  color: var(--text);
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.logout-button:hover {
+  background: #fef2f2;
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.logout-button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.logout-button svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 /* =========================
    TABLET
 ========================= */
@@ -405,6 +492,16 @@ defineEmits(['toggle-sidebar'])
     width: 14px;
     height: 14px;
   }
+
+  .logout-button {
+    width: 32px;
+    height: 32px;
+  }
+
+  .logout-button svg {
+    width: 16px;
+    height: 16px;
+  }
 }
 
 @media (max-width: 374px) {
@@ -430,6 +527,11 @@ defineEmits(['toggle-sidebar'])
   }
 
   .profile-avatar {
+    width: 30px;
+    height: 30px;
+  }
+
+  .logout-button {
     width: 30px;
     height: 30px;
   }

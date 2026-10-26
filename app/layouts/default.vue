@@ -25,10 +25,12 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useAuth } from '~/composables/useAuth'
 
 const route = useRoute()
+const { initAuth } = useAuth()
 
 const isSidebarOpen = ref(false)
 
@@ -40,7 +42,7 @@ const closeSidebar = () => {
   isSidebarOpen.value = false
 }
 
-const handleKeydown = (event) => {
+const handleKeydown = (event: KeyboardEvent) => {
   if (event.key === 'Escape') {
     closeSidebar()
   }
@@ -58,6 +60,8 @@ watch(isSidebarOpen, (open) => {
 })
 
 onMounted(() => {
+  initAuth()
+
   if (!import.meta.client) return
 
   window.addEventListener('keydown', handleKeydown)

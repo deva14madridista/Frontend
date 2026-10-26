@@ -1,4 +1,3 @@
-
 <template>
   <div class="login-page">
     <!-- LEFT BRAND SECTION -->
@@ -23,11 +22,6 @@
 
     <!-- RIGHT LOGIN SECTION -->
     <section class="form-section">
-      <!-- BACK TO DASHBOARD -->
-      <NuxtLink to="/dashboard" class="back-home">
-        <span class="back-arrow">←</span>
-        Kembali ke Dashboard
-      </NuxtLink>
 
       <div class="login-form">
         <!-- HEADER -->
@@ -36,7 +30,7 @@
           <p>Silakan masuk untuk melanjutkan</p>
         </div>
 
-        <form @submit.prevent="login">
+        <form @submit.prevent="handleLogin">
           <!-- EMAIL -->
           <div class="form-group">
             <label>
@@ -48,6 +42,7 @@
               type="email"
               placeholder="masukkan email"
               required
+              autocomplete="email"
             />
           </div>
 
@@ -63,6 +58,7 @@
                 :type="showPassword ? 'text' : 'password'"
                 placeholder="masukkan password"
                 required
+                autocomplete="current-password"
               />
 
               <button
@@ -94,6 +90,11 @@
             </NuxtLink>
           </div>
 
+          <!-- ERROR MESSAGE -->
+          <div v-if="error" class="error-message">
+            {{ error }}
+          </div>
+
           <!-- DIVIDER -->
           <div class="divider">
             <span></span>
@@ -106,35 +107,58 @@
             type="button"
             class="google-button"
             @click="loginWithGoogle"
+            :disabled="loading"
           >
             <strong>G</strong>
             Masuk dengan Google
           </button>
 
           <!-- LOGIN -->
-          <button type="submit" class="login-button">
-            Masuk
+          <button type="submit" class="login-button" :disabled="loading">
+            <span v-if="loading">Memproses...</span>
+            <span v-else>Masuk</span>
           </button>
 
           <!-- REGISTER -->
           <p class="register-text">
             Belum punya akun?
-            <NuxtLink to="/register">
+            <NuxtLink to="/admin/register">
               Daftar
             </NuxtLink>
           </p>
         </form>
+
+        <!-- DEMO ACCOUNTS -->
+        <div class="demo-accounts">
+          <p class="demo-title">Akun Demo (password: password123)</p>
+          <div class="demo-list">
+            <button
+              v-for="account in demoAccounts"
+              :key="account.email"
+              type="button"
+              class="demo-account"
+              @click="fillDemoAccount(account)"
+            >
+              <span class="demo-role">{{ account.role }}</span>
+              <span class="demo-email">{{ account.email }}</span>
+            </button>
+          </div>
+        </div>
       </div>
     </section>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { reactive, ref } from 'vue'
+import { useAuth } from '~/composables/useAuth'
+import { ROLE_ROUTES } from '~/utils/nav'
 
 definePageMeta({
   layout: 'auth'
 })
+
+const { login } = useAuth()
 
 // FORM DATA
 const form = reactive({
@@ -148,30 +172,54 @@ const rememberMe = ref(false)
 // PASSWORD VISIBILITY
 const showPassword = ref(false)
 
-// LOGIN
-const login = () => {
+// LOADING STATE
+const loading = ref(false)
+
+// ERROR STATE
+const error = ref<string | null>(null)
+
+// DEMO ACCOUNTS
+const demoAccounts = [
+  { email: 'admin@eduabsen.com', role: 'Administrator' },
+  { email: 'finance@eduabsen.com', role: 'Finance' },
+  { email: 'hrd@eduabsen.com', role: 'HRD' },
+  { email: 'pegawai@eduabsen.com', role: 'Pegawai' },
+  { email: 'atasan@eduabsen.com', role: 'Atasan' },
+]
+
+const handleLogin = async () => {
+  error.value = null
+  
   if (!form.email) {
-    alert('Email wajib diisi.')
+    error.value = 'Email wajib diisi.'
     return
   }
 
   if (!form.password) {
-    alert('Password wajib diisi.')
+    error.value = 'Password wajib diisi.'
     return
   }
 
-  console.log('Data Login:', {
-    email: form.email,
-    password: form.password,
-    rememberMe: rememberMe.value
-  })
+  loading.value = true
 
-  alert('Login berhasil!')
+  try {
+    const loggedInUser = await login(form.email, form.password)
+    navigateTo(ROLE_ROUTES[loggedInUser.role])
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : 'Login gagal. Silakan coba lagi.'
+  } finally {
+    loading.value = false
+  }
 }
 
-// GOOGLE LOGIN
+const fillDemoAccount = (account: { email: string; role: string }) => {
+  form.email = account.email
+  form.password = 'password123'
+  error.value = null
+}
+
 const loginWithGoogle = () => {
-  console.log('Login dengan Google')
+  alert('Fitur login Google belum diintegrasikan.')
 }
 </script>
 
@@ -393,6 +441,18 @@ const loginWithGoogle = () => {
   font-weight: 500;
 }
 
+/* ERROR MESSAGE */
+.error-message {
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 500;
+}
+
 /* DIVIDER */
 .divider {
   display: flex;
@@ -431,8 +491,13 @@ const loginWithGoogle = () => {
   transition: 0.2s;
 }
 
-.google-button:hover {
+.google-button:hover:not(:disabled) {
   background: #f8fafc;
+}
+
+.google-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .google-button strong {
@@ -457,8 +522,13 @@ const loginWithGoogle = () => {
   transition: 0.2s;
 }
 
-.login-button:hover {
+.login-button:hover:not(:disabled) {
   background: #2460df;
+}
+
+.login-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 /* REGISTER TEXT */
@@ -473,6 +543,69 @@ const loginWithGoogle = () => {
   color: #2d6df6;
   text-decoration: none;
   font-weight: 600;
+}
+
+/* DEMO ACCOUNTS */
+.demo-accounts {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e9ef;
+}
+
+.demo-title {
+  margin: 0 0 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #8b96a7;
+  text-align: center;
+}
+
+.account-note {
+  margin: 12px 0 0;
+  color: #8b96a7;
+  font-size: 10px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.demo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.demo-account {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border: 1px solid #dce3ec;
+  border-radius: 6px;
+  background: #fafbfc;
+  color: #344054;
+  font-size: 12px;
+  cursor: pointer;
+  transition: 0.2s;
+  text-align: left;
+}
+
+.demo-account:hover {
+  background: #f0f4f8;
+  border-color: #2d6df6;
+}
+
+.demo-role {
+  font-weight: 600;
+  color: #2d6df6;
+  font-size: 11px;
+  background: #eef3ff;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.demo-email {
+  font-size: 11px;
+  color: #64748b;
 }
 
 /* RESPONSIVE */
@@ -551,6 +684,18 @@ const loginWithGoogle = () => {
     height: 46px;
     font-size: 13px;
   }
+
+  .demo-account {
+    font-size: 13px;
+  }
+
+  .demo-role {
+    font-size: 12px;
+  }
+
+  .demo-email {
+    font-size: 12px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -574,7 +719,6 @@ const loginWithGoogle = () => {
   .back-home {
     top: 22px;
     left: 18px;
-
     font-size: 12px;
   }
 
@@ -584,6 +728,14 @@ const loginWithGoogle = () => {
 
   .login-form {
     max-width: 100%;
+  }
+
+  .demo-list {
+    gap: 6px;
+  }
+
+  .demo-account {
+    padding: 8px 10px;
   }
 }
 

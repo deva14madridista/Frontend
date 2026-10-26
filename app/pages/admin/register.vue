@@ -24,7 +24,7 @@
     <!-- RIGHT REGISTER SECTION -->
     <section class="form-section">
       <!-- BACK TO DASHBOARD -->
-      <NuxtLink to="/dashboard" class="back-home">
+      <NuxtLink to="/admin/dashboard" class="back-home">
         <span class="back-arrow">←</span>
         Kembali ke Dashboard
       </NuxtLink>
@@ -191,7 +191,7 @@
           <!-- LOGIN -->
           <p class="login-text">
             Sudah punya akun?
-            <NuxtLink to="/login">Masuk</NuxtLink>
+            <NuxtLink to="/admin/login">Masuk</NuxtLink>
           </p>
         </form>
       </div>
