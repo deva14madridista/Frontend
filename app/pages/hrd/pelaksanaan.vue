@@ -3,9 +3,9 @@
     <!-- Breadcrumb -->
     <div class="breadcrumb">
       <NuxtLink to="/dashboard">Dashboard</NuxtLink>
-      <span>›</span>
+      <AppIcon name="chevron-right" class="crumb-sep" />
       <NuxtLink to="/hrd/dashboard">HRD</NuxtLink>
-      <span>›</span>
+      <AppIcon name="chevron-right" class="crumb-sep" />
       <strong>Pelaksanaan Perjalanan</strong>
     </div>
 
@@ -17,41 +17,43 @@
     <!-- Summary Stats -->
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-icon cyan">▣</div>
+        <div class="stat-icon cyan"><AppIcon name="receipt" /></div>
         <div>
           <p>Total Perjalanan</p>
           <h2>{{ totalTrips }}</h2>
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon orange">⏳</div>
+        <div class="stat-icon orange"><AppIcon name="hourglass" /></div>
         <div>
-          <p>Menunggu Perhatian</p>
+          <p>Menunggu Persetujuan</p>
           <h2>{{ pendingCount }}</h2>
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon green">✅</div>
+        <div class="stat-icon green"><AppIcon name="check-circle" /></div>
         <div>
           <p>Selesai</p>
           <h2>{{ completedCount }}</h2>
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon blue">📊</div>
+        <div class="stat-icon blue"><AppIcon name="navigation" /></div>
         <div>
-          <p>Memerlukan Perhatian</p>
-          <h2>{{ attentionCount }}</h2>
+          <p>Sedang Berlangsung</p>
+          <h2>{{ ongoingCount }}</h2>
         </div>
       </div>
     </div>
+
+    <div v-if="error" class="data-error" role="alert">{{ error }}</div>
 
     <!-- Filter Card -->
     <div class="filter-card">
       <div class="filter-group search-group">
         <label>Cari Pegawai / Tujuan</label>
         <div class="search-input">
-          <svg viewBox="0 0 24 24"><path d="M10.5 4a6.5 6.5 0 1 0 4.08 11.56l4.43 4.43 1.41-1.41-4.43-4.43A6.5 6.5 0 0 0 10.5 4Zm0 2a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Z"/></svg>
+          <AppIcon name="search" />
           <input v-model="search" type="text" placeholder="Cari..." />
         </div>
       </div>
@@ -60,8 +62,8 @@
         <label>Status</label>
         <select v-model="selectedStatus">
           <option value="">Semua</option>
-          <option value="menunggu">Menunggu</option>
-          <option value="berlangsung">Berlangsung</option>
+          <option value="diajukan">Menunggu</option>
+          <option value="berjalan">Berlangsung</option>
           <option value="selesai">Selesai</option>
         </select>
       </div>
@@ -70,10 +72,9 @@
         <label>Departemen</label>
         <select v-model="selectedDepartment">
           <option value="">Semua</option>
-          <option value="Marketing">Marketing</option>
-          <option value="Sales">Sales</option>
-          <option value="HRD">HRD</option>
-          <option value="Finance">Finance</option>
+          <option v-for="department in departmentOptions" :key="department" :value="department">
+            {{ department }}
+          </option>
         </select>
       </div>
     </div>
@@ -94,13 +95,23 @@
             </tr>
           </thead>
           <tbody>
+            <tr v-if="loading && trips.length === 0">
+              <td colspan="7" class="table-state">Memuat data perjalanan...</td>
+            </tr>
+            <tr v-else-if="filteredTrips.length === 0">
+              <td colspan="7" class="table-state">Tidak ada data perjalanan.</td>
+            </tr>
             <tr v-for="(trip, index) in filteredTrips" :key="trip.id">
               <td>{{ index + 1 }}</td>
-              <td>{{ trip.employee }}</td>
-              <td>{{ trip.destination }}</td>
-              <td>{{ trip.startDate }}</td>
-              <td>{{ trip.endDate }}</td>
-              <td><span class="status-badge" :class="trip.statusClass">{{ trip.status }}</span></td>
+              <td>{{ trip.user?.name || '—' }}</td>
+              <td>{{ trip.tujuan }}</td>
+              <td>{{ formatDate(trip.tanggal_berangkat) }}</td>
+              <td>{{ formatDate(trip.tanggal_pulang) }}</td>
+              <td>
+                <span class="status-badge" :class="tripStatusClass(trip.status)">
+                  {{ tripStatusLabel(trip.status) }}
+                </span>
+              </td>
               <td>
                 <NuxtLink :to="`/hrd/detail-perjalanan/${trip.id}`" class="detail-button">Detail</NuxtLink>
               </td>
@@ -114,21 +125,27 @@
         <article v-for="(trip, index) in filteredTrips" :key="`card-${trip.id}`" class="trip-card">
           <div class="trip-card-header">
             <span class="trip-card-number">Perjalanan #{{ index + 1 }}</span>
-            <span class="status-badge" :class="trip.statusClass">{{ trip.status }}</span>
+            <span class="status-badge" :class="tripStatusClass(trip.status)">
+              {{ tripStatusLabel(trip.status) }}
+            </span>
           </div>
-          <div class="trip-card-title">{{ trip.destination }}</div>
+          <div class="trip-card-title">{{ trip.tujuan }}</div>
           <dl class="trip-card-details">
             <div>
               <dt>Pegawai</dt>
-              <dd>{{ trip.employee }}</dd>
+              <dd>{{ trip.user?.name || '—' }}</dd>
+            </div>
+            <div>
+              <dt>Departemen</dt>
+              <dd>{{ trip.user?.department || '—' }}</dd>
             </div>
             <div>
               <dt>Tanggal Berangkat</dt>
-              <dd>{{ trip.startDate }}</dd>
+              <dd>{{ formatDate(trip.tanggal_berangkat) }}</dd>
             </div>
             <div>
               <dt>Tanggal Kembali</dt>
-              <dd>{{ trip.endDate }}</dd>
+              <dd>{{ formatDate(trip.tanggal_pulang) }}</dd>
             </div>
           </dl>
           <div class="trip-card-actions">
@@ -140,53 +157,84 @@
 
       <!-- Pagination -->
       <div class="table-footer">
-        <span class="showing-text">Menampilkan {{ filteredTrips.length }} dari {{ trips.length }} data</span>
-        <div class="pagination">
-          <button class="page-button active">1</button>
-          <button class="page-button">2</button>
-          <button class="page-button">3</button>
-        </div>
+        <span class="showing-text">Menampilkan {{ filteredTrips.length }} dari {{ meta?.total ?? filteredTrips.length }} data</span>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
+import type { TripQuery } from '~/types/api'
+import { useTrips } from '~/composables/useTrips'
+import { useDashboard } from '~/composables/useDashboard'
+import { formatDate, tripStatusClass, tripStatusLabel } from '~/utils/format'
 
 const search = ref('')
 const selectedStatus = ref('')
 const selectedDepartment = ref('')
 
-const trips = ref([
-  { id: 1, employee: 'Andi Saputra', destination: 'Jakarta - Bandung', startDate: '10 Mei 2026', endDate: '12 Mei 2026', status: 'Menunggu', statusClass: 'waiting' },
-  { id: 2, employee: 'Sinta Maharani', destination: 'Jakarta - Surabaya', startDate: '15 Mei 2026', endDate: '18 Mei 2026', status: 'Berlangsung', statusClass: 'ongoing' },
-  { id: 3, employee: 'Dewi Lestari', destination: 'Jakarta - Yogyakarta', startDate: '20 Mei 2026', endDate: '22 Mei 2026', status: 'Selesai', statusClass: 'completed' },
-  { id: 4, employee: 'Budi Santoso', destination: 'Jakarta - Semarang', startDate: '25 Mei 2026', endDate: '27 Mei 2026', status: 'Menunggu', statusClass: 'waiting' },
-  { id: 5, employee: 'Rudi Hartono', destination: 'Jakarta - Medan', startDate: '01 Juni 2026', endDate: '03 Juni 2026', status: 'Berlangsung', statusClass: 'ongoing' },
-  { id: 6, employee: 'Maya Putri', destination: 'Jakarta - Bali', startDate: '05 Juni 2026', endDate: '07 Juni 2026', status: 'Selesai', statusClass: 'completed' },
-  { id: 7, employee: 'Joko Widodo', destination: 'Jakarta - Bandung', startDate: '10 Mei 2026', endDate: '12 Mei 2026', status: 'Menunggu', statusClass: 'waiting' },
-  { id: 8, employee: 'Fitriani', destination: 'Jakarta - Surabaya', startDate: '15 Mei 2026', endDate: '18 Mei 2026', status: 'Berlangsung', statusClass: 'ongoing' },
-])
+const { trips, meta, loading, error, fetchTrips } = useTrips()
+const { summary, fetchDashboard } = useDashboard()
 
-const filteredTrips = computed(() => {
-  return trips.value.filter(trip => {
-    const searchMatch = !search.value ||
-      trip.employee.toLowerCase().includes(search.value.toLowerCase()) ||
-      trip.destination.toLowerCase().includes(search.value.toLowerCase())
+let searchTimer: ReturnType<typeof setTimeout> | null = null
 
-    const statusMatch = !selectedStatus.value || trip.status === selectedStatus.value
-    const deptMatch = !selectedDepartment.value || true // Filter departemen bisa ditambahkan
+const departmentOptions = computed(() => {
+  const values = new Set<string>()
 
-    return searchMatch && statusMatch
-  })
+  for (const trip of trips.value) {
+    if (trip.user?.department) values.add(trip.user.department)
+  }
+
+  // Pertahankan pilihan aktif walau server memfilter baris yang tampil.
+  if (selectedDepartment.value) values.add(selectedDepartment.value)
+
+  return Array.from(values).sort((a, b) => a.localeCompare(b))
 })
 
-// Computed summary values
-const totalTrips = computed(() => trips.value.length)
-const pendingCount = computed(() => trips.value.filter(t => t.status === 'Menunggu').length)
-const completedCount = computed(() => trips.value.filter(t => t.status === 'Selesai').length)
-const attentionCount = computed(() => trips.value.filter(t => t.status === 'Menunggu').length)
+// Filter berjalan di server; status "selesai" mencakup "lengkap".
+const filteredTrips = computed(() => trips.value)
+
+const perStatus = computed(() => summary.value?.per_status)
+
+const totalTrips = computed(() => summary.value?.total_perjalanan ?? trips.value.length)
+const pendingCount = computed(
+  () => perStatus.value?.diajukan ?? trips.value.filter((trip) => trip.status === 'diajukan').length,
+)
+const completedCount = computed(
+  () => (perStatus.value ? (perStatus.value.selesai + perStatus.value.lengkap) : trips.value.filter((trip) => trip.status === 'selesai' || trip.status === 'lengkap').length),
+)
+const ongoingCount = computed(
+  () => perStatus.value?.berjalan ?? trips.value.filter((trip) => trip.status === 'berjalan').length,
+)
+
+const reload = async () => {
+  await fetchTrips({
+    per_page: 100,
+    q: search.value.trim() || undefined,
+    status: (selectedStatus.value || undefined) as TripQuery['status'],
+    department: selectedDepartment.value || undefined,
+  }).catch(() => {})
+}
+
+watch(search, () => {
+  if (searchTimer) clearTimeout(searchTimer)
+  searchTimer = setTimeout(() => {
+    void reload()
+  }, 400)
+})
+
+watch([selectedStatus, selectedDepartment], () => {
+  void reload()
+})
+
+onMounted(async () => {
+  try {
+    await Promise.all([reload(), fetchDashboard()])
+  } catch {
+    // pesan error sudah disimpan oleh composable
+  }
+})
 </script>
 
 <style scoped>
@@ -276,7 +324,7 @@ const attentionCount = computed(() => trips.value.filter(t => t.status === 'Menu
   height: 31px; display: flex; align-items: center;
   border: 1px solid #dce2eb; border-radius: 6px; background: var(--white);
 }
-.search-input svg, .date-input svg { width: 14px; height: 14px; margin: 0 8px; fill: #718096; flex-shrink: 0; }
+.search-input svg, .date-input svg { width: 14px; height: 14px; margin: 0 8px; color: #718096; flex-shrink: 0; }
 .search-input input, .date-input input, .filter-group select {
   width: 100%; height: 31px; box-sizing: border-box;
   border: 1px solid #dce2eb; border-radius: 6px;
@@ -312,8 +360,13 @@ tbody tr:last-child td { border-bottom: none; }
   font-size: 9px; font-weight: 600; white-space: nowrap;
 }
 .waiting { background: #fff3df; color: #ef9b16; }
-.ongoing { background: #e8efff; color: var(--primary); }
+.draft { background: #eef1f7; color: #667085; }
+.approved { background: #e8efff; color: var(--primary); }
+.rejected { background: #ffe8e8; color: #ef5350; }
+.ongoing { background: #fff3df; color: #ef9b16; }
 .completed { background: #dff7ef; color: #18a77c; }
+.data-error { margin-bottom: 16px; padding: 11px 14px; border: 1px solid #f4c7c7; border-radius: 8px; background: #fff5f5; color: #b42318; font-size: 11px; }
+.table-state { padding: 22px 12px; text-align: center; font-size: 10px; color: #8792a5; }
 
 .detail-button {
   display: inline-block; margin: auto;
@@ -321,6 +374,8 @@ tbody tr:last-child td { border-bottom: none; }
   color: #1769ff; font-family: inherit; font-size: 10px; font-weight: 600; cursor: pointer; text-decoration: none;
 }
 .detail-button:hover { text-decoration: underline; }
+.detail-button.disabled { color: #9aa4b5; cursor: not-allowed; }
+.detail-button.disabled:hover { text-decoration: none; }
 
 /* MOBILE CARDS */
 .trip-cards { display: none; }

@@ -4,7 +4,7 @@
     <!-- Breadcrumb -->
     <div class="breadcrumb">
       <NuxtLink to="/dashboard">Dashboard</NuxtLink>
-      <span>›</span>
+      <AppIcon name="chevron-right" class="crumb-sep" />
       <strong>Perjalanan Dinas</strong>
     </div>
 
@@ -23,11 +23,7 @@
         <label>Cari Kota / Keperluan</label>
 
         <div class="search-input">
-          <svg viewBox="0 0 24 24">
-            <path
-              d="M10.5 4a6.5 6.5 0 1 0 4.08 11.56l4.43 4.43 1.41-1.41-4.43-4.43A6.5 6.5 0 0 0 10.5 4Zm0 2a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Z"
-            />
-          </svg>
+          <AppIcon name="search" />
 
           <input
             v-model="search"
@@ -43,11 +39,13 @@
 
         <select v-model="selectedStatus">
           <option value="">Semua Status</option>
-          <option value="Disetujui">Disetujui</option>
-          <option value="Menunggu">Menunggu</option>
-          <option value="Ditolak">Ditolak</option>
-          <option value="Selesai">Selesai</option>
-          <option value="Dalam Perjalanan">Dalam Perjalanan</option>
+          <option value="draft">Draft</option>
+          <option value="diajukan">Menunggu</option>
+          <option value="disetujui">Disetujui</option>
+          <option value="ditolak">Ditolak</option>
+          <option value="berjalan">Dalam Perjalanan</option>
+          <option value="selesai">Selesai</option>
+          <option value="lengkap">Lengkap</option>
         </select>
       </div>
 
@@ -61,12 +59,19 @@
             type="date"
           />
 
-          <svg viewBox="0 0 24 24">
-            <path
-              d="M7 2v2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2H7Zm12 17H5V9h14v10ZM7 11h3v3H7v-3Z"
-            />
-          </svg>
+          <AppIcon name="calendar" />
         </div>
+      </div>
+
+      <!-- Archive -->
+      <div class="filter-group status-group">
+        <label>Arsip</label>
+
+        <select v-model="selectedArchive">
+          <option value="aktif">Aktif</option>
+          <option value="arsip">Arsip</option>
+          <option value="semua">Semua</option>
+        </select>
       </div>
 
     </div>
@@ -90,16 +95,38 @@
           </thead>
 
           <tbody>
-            <tr
-              v-for="(trip, index) in filteredTrips"
-              :key="trip.id"
-            >
+            <tr v-if="loading">
+              <td colspan="7" class="table-state">
+                Memuat data perjalanan...
+              </td>
+            </tr>
+
+            <tr v-else-if="error">
+              <td colspan="7" class="table-state table-error">
+                {{ error }}
+              </td>
+            </tr>
+
+            <tr v-else-if="filteredTrips.length === 0">
+              <td colspan="7" class="table-state">
+                Tidak ada perjalanan yang sesuai dengan filter.
+              </td>
+            </tr>
+
+            <template v-else>
+              <tr
+                v-for="(trip, index) in filteredTrips"
+                :key="trip.id"
+              >
               <td>{{ index + 1 }}</td>
 
               <td>
-                <a href="#" class="destination">
+                <NuxtLink
+                  :to="{ path: '/admin/DetailPerjalanan', query: { id: trip.id } }"
+                  class="destination"
+                >
                   {{ trip.destination }}
-                </a>
+                </NuxtLink>
               </td>
 
               <td>{{ trip.startDate }}</td>
@@ -115,16 +142,20 @@
                   class="status-badge"
                   :class="trip.statusClass"
                 >
-                  {{ trip.status }}
+                  {{ trip.statusLabel }}
                 </span>
               </td>
 
               <td>
-                <button class="detail-button">
+                <NuxtLink
+                  :to="{ path: '/admin/DetailPerjalanan', query: { id: trip.id } }"
+                  class="detail-button"
+                >
                   Detail
-                </button>
+                </NuxtLink>
               </td>
-            </tr>
+              </tr>
+            </template>
           </tbody>
         </table>
 
@@ -144,13 +175,16 @@
               class="status-badge"
               :class="trip.statusClass"
             >
-              {{ trip.status }}
+              {{ trip.statusLabel }}
             </span>
           </div>
 
-          <a href="#" class="trip-card-title">
+          <NuxtLink
+            :to="{ path: '/admin/DetailPerjalanan', query: { id: trip.id } }"
+            class="trip-card-title"
+          >
             {{ trip.destination }}
-          </a>
+          </NuxtLink>
 
           <dl class="trip-card-details">
             <div>
@@ -170,12 +204,12 @@
           </dl>
 
           <div class="trip-card-actions">
-            <button
+            <NuxtLink
+              :to="{ path: '/admin/DetailPerjalanan', query: { id: trip.id } }"
               class="detail-button"
-              type="button"
             >
               Detail
-            </button>
+            </NuxtLink>
           </div>
         </article>
 
@@ -191,23 +225,20 @@
       <div class="table-footer">
 
         <span class="showing-text">
-          Menampilkan {{ filteredTrips.length }} dari 24 perjalanan
+          Menampilkan {{ filteredTrips.length }} dari {{ totalTrips }} perjalanan
         </span>
 
-        <div class="pagination">
-
-          <button class="page-button active">
-            1
+        <div v-if="lastPage > 1" class="pagination">
+          <button
+            v-for="pageNumber in lastPage"
+            :key="pageNumber"
+            class="page-button"
+            :class="{ active: pageNumber === page }"
+            type="button"
+            @click="changePage(pageNumber)"
+          >
+            {{ pageNumber }}
           </button>
-
-          <button class="page-button">
-            2
-          </button>
-
-          <button class="page-button">
-            3
-          </button>
-
         </div>
 
       </div>
@@ -217,78 +248,77 @@
   </div>
 </template>
 
-<script setup>
-import { computed, ref } from 'vue'
+<script setup lang="ts">
+import { computed, onMounted, ref, watch } from 'vue'
+import type { TripStatus } from '~/types/api'
+import { useTrips } from '~/composables/useTrips'
+import { formatDate, tripStatusClass, tripStatusLabel } from '~/utils/format'
+
+const { trips, meta, loading, error, fetchTrips } = useTrips()
 
 const search = ref('')
-const selectedStatus = ref('')
+const selectedStatus = ref<TripStatus | ''>('')
 const selectedDate = ref('')
+const selectedArchive = ref<'aktif' | 'arsip' | 'semua'>('aktif')
+const page = ref(1)
 
-const trips = [
-  {
-    id: 1,
-    destination: 'Jakarta - Bandung',
-    startDate: '12 Mei 2026',
-    endDate: '15 Mei 2026',
-    type: 'Kereta Api',
-    status: 'Disetujui',
-    statusClass: 'approved'
-  },
-  {
-    id: 2,
-    destination: 'Jakarta - Surabaya',
-    startDate: '20 Mei 2026',
-    endDate: '24 Mei 2026',
-    type: 'Pesawat Terbang',
-    status: 'Menunggu',
-    statusClass: 'waiting'
-  },
-  {
-    id: 3,
-    destination: 'Jakarta - Semarang',
-    startDate: '28 Mei 2026',
-    endDate: '31 Mei 2026',
-    type: 'Mobil Dinas',
-    status: 'Ditolak',
-    statusClass: 'rejected'
-  },
-  {
-    id: 4,
-    destination: 'Jakarta - Yogyakarta',
-    startDate: '02 Juni 2026',
-    endDate: '06 Juni 2026',
-    type: 'Kereta Api',
-    status: 'Selesai',
-    statusClass: 'completed'
-  },
-  {
-    id: 5,
-    destination: 'Jakarta - Medan',
-    startDate: '10 Juni 2026',
-    endDate: '15 Juni 2026',
-    type: 'Pesawat Terbang',
-    status: 'Dalam Perjalanan',
-    statusClass: 'ongoing'
-  }
-]
+let searchTimer: ReturnType<typeof setTimeout> | null = null
+
+const needLabel = (jenis: string) => (jenis === 'transportasi' ? 'Transportasi' : 'Penginapan')
+
+const currentParams = () => ({
+  page: page.value,
+  tujuan: search.value.trim() || undefined,
+  status: selectedStatus.value || undefined,
+  tanggal: selectedDate.value || undefined,
+  arsip: selectedArchive.value === 'aktif' ? undefined : selectedArchive.value,
+})
+
+const reload = async () => {
+  page.value = 1
+  await fetchTrips({ ...currentParams(), page: 1 }).catch(() => {})
+}
+
+// Pencarian teks di-debounce; filter lain langsung memuat ulang dari server.
+watch(search, () => {
+  if (searchTimer) clearTimeout(searchTimer)
+  searchTimer = setTimeout(() => {
+    void reload()
+  }, 400)
+})
+
+watch([selectedStatus, selectedDate, selectedArchive], () => {
+  void reload()
+})
 
 const filteredTrips = computed(() => {
-  return trips.filter((trip) => {
+  return trips.value
+    .map((trip) => ({
+      id: trip.id,
+      destination: trip.tujuan,
+      startDate: formatDate(trip.tanggal_berangkat),
+      endDate: formatDate(trip.tanggal_pulang),
+      startRaw: trip.tanggal_berangkat,
+      endRaw: trip.tanggal_pulang,
+      keperluan: trip.keperluan,
+      type: trip.needs?.length ? trip.needs.map((need) => needLabel(need.jenis)).join(', ') : '—',
+      status: trip.status,
+      statusLabel: trip.statusLabel ?? tripStatusLabel(trip.status),
+      statusClass: tripStatusClass(trip.status),
+    }))
+})
 
-    const searchMatch =
-      trip.destination
-        .toLowerCase()
-        .includes(search.value.toLowerCase()) ||
-      trip.type
-        .toLowerCase()
-        .includes(search.value.toLowerCase())
+const totalTrips = computed(() => meta.value?.total ?? trips.value.length)
+const lastPage = computed(() => Math.max(meta.value?.last_page ?? 1, 1))
 
-    const statusMatch =
-      !selectedStatus.value ||
-      trip.status === selectedStatus.value
+const changePage = async (value: number) => {
+  if (value < 1 || value > lastPage.value || value === page.value) return
+  page.value = value
+  await fetchTrips(currentParams()).catch(() => {})
+}
 
-    return searchMatch && statusMatch
-  })
+onMounted(() => {
+  fetchTrips({ page: 1 }).catch(() => {})
 })
 </script>
 
@@ -418,7 +448,7 @@ const filteredTrips = computed(() => {
 
   margin: 0 8px;
 
-  fill: #718096;
+  color: #718096;
   flex-shrink: 0;
 }
 

@@ -7,30 +7,32 @@
       </div>
     </div>
 
+    <p v-if="errorMessage" class="state-message error">{{ errorMessage }}</p>
+
     <!-- Summary Cards -->
     <div class="summary-grid">
       <DashboardSummaryCard
         title="Total Pengajuan"
-        :value="5"
-        icon="📝"
+        :value="summary?.total_perjalanan ?? 0"
+        icon="file-plus"
       />
 
       <DashboardSummaryCard
         title="Menunggu Persetujuan"
-        :value="2"
-        icon="◷"
+        :value="summary?.per_status.diajukan ?? 0"
+        icon="clock"
       />
 
       <DashboardSummaryCard
         title="Perjalanan Aktif"
-        :value="1"
-        icon="➤"
+        :value="summary?.per_status.berjalan ?? 0"
+        icon="navigation"
       />
 
       <DashboardSummaryCard
         title="Ringkasan Pengeluaran"
-        value="Rp 1.250.000"
-        icon="💰"
+        :value="formatCurrency(summary?.total_biaya ?? 0)"
+        icon="wallet"
       />
     </div>
 
@@ -49,13 +51,16 @@
             </div>
             <NuxtLink to="/pegawai/rencana" class="view-all">Lihat Semua</NuxtLink>
           </div>
-          <div class="trip-list">
+
+          <p v-if="pageLoading" class="state-message">Memuat perjalanan...</p>
+          <p v-else-if="upcomingTrips.length === 0" class="state-message">Belum ada perjalanan mendatang.</p>
+          <div v-else class="trip-list">
             <div v-for="trip in upcomingTrips" :key="trip.id" class="trip-item">
               <div class="trip-top">
-                <span class="route">{{ trip.route }}</span>
-                <span class="date">{{ trip.date }}</span>
+                <span class="route">{{ trip.tujuan }}</span>
+                <span class="date">{{ formatDate(trip.tanggal_berangkat) }}</span>
               </div>
-              <p>{{ trip.description }}</p>
+              <p>{{ trip.keperluan }}</p>
             </div>
           </div>
         </div>
@@ -66,15 +71,23 @@
         <div class="section-header">
           <h2>Aktivitas Terbaru</h2>
         </div>
-        <div class="activity-list">
-          <article v-for="activity in recentActivities" :key="activity.id" class="activity-item">
-            <div class="activity-icon">{{ activity.icon }}</div>
+
+        <p v-if="pageLoading" class="state-message">Memuat aktivitas...</p>
+        <p v-else-if="recentActivities.length === 0" class="state-message">Belum ada aktivitas perjalanan.</p>
+        <div v-else class="activity-list">
+          <NuxtLink
+            v-for="activity in recentActivities"
+            :key="activity.id"
+            class="activity-item"
+            to="/pegawai/laporan"
+          >
+            <div class="activity-icon"><AppIcon :name="activity.icon" /></div>
             <div class="activity-info">
               <p>{{ activity.title }}</p>
             </div>
             <span class="activity-status" :class="activity.statusClass">{{ activity.status }}</span>
             <span class="activity-time">{{ activity.time }}</span>
-          </article>
+          </NuxtLink>
         </div>
       </section>
     </div>
@@ -86,34 +99,125 @@
       </div>
       <div class="quick-actions">
         <NuxtLink to="/pegawai/rencana" class="action-button">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11l3 3L22 4"/></svg>
+          <AppIcon name="calendar-plus" />
           <span>Buat Rencana Perjalanan</span>
         </NuxtLink>
         <NuxtLink to="/pegawai/pengeluaran" class="action-button">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2Zm0 14H4V8h16v10Zm-2-5h-4v2h4v-2Z"/></svg>
+          <AppIcon name="wallet" />
           <span>Ajukan Pengeluaran</span>
         </NuxtLink>
         <NuxtLink to="/pegawai/laporan" class="action-button">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8ZM16 8v8M12 12h6M12 16h6"/></svg>
+          <AppIcon name="file-text" />
           <span>Lihat Laporan Saya</span>
         </NuxtLink>
       </div>
     </section>
+
+    <DashboardTripCalendar trip-link="/pegawai/laporan" />
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
 import DashboardSummaryCard from '~/components/dashboard/SummaryCard.vue'
+import { useDashboard } from '~/composables/useDashboard'
+import { useTrips } from '~/composables/useTrips'
+import type { TripStatus } from '~/types/api'
+import { formatCurrency, formatDate, tripStatusClass, tripStatusLabel } from '~/utils/format'
 
-const upcomingTrips = ref([
-  { id: 1, route: 'Jakarta - Bandung', date: '24 Jan 2026', description: 'Pertemuan dengan Direksi & Vendor lokal.' },
-  { id: 2, route: 'Jakarta - Surabaya', date: '05 Feb 2026', description: 'Training regional & evaluasi kuartal.' },
-])
+const {
+  summary,
+  error: dashboardError,
+  fetchDashboard,
+} = useDashboard()
 
-const recentActivities = ref([
-  { id: 1, icon: '🕐', title: 'Pengajuan perjalanan dinas ke Jakarta - Bandung', status: 'Menunggu Persetujuan', statusClass: 'waiting', time: 'Baru saja' },
-  { id: 2, icon: '✓', title: 'Perjalanan dinas Semarang selesai & laporan diunggah', status: 'Selesai', statusClass: 'completed', time: '1 hari lalu' },
-])
+const {
+  trips,
+  error: tripsError,
+  fetchTrips,
+} = useTrips()
+
+const pageLoading = ref(true)
+
+const errorMessage = computed(() => dashboardError.value ?? tripsError.value)
+
+const upcomingTrips = computed(() => {
+  return trips.value
+    .filter(trip => trip.status === 'disetujui' || trip.status === 'berjalan')
+    .slice()
+    .sort((a, b) => a.tanggal_berangkat.localeCompare(b.tanggal_berangkat))
+})
+
+const recentActivities = computed(() => {
+  const activities = summary.value?.aktivitas_terbaru ?? []
+
+  if (activities.length > 0) {
+    return activities.slice(0, 8).map((activity) => ({
+      id: activity.id,
+      icon: activity.kind === 'approval' ? 'check-circle' : activity.kind === 'payment' ? 'credit-card' : 'pencil',
+      title: activity.detail ? `${activity.title} — ${activity.detail}` : activity.title,
+      status: activity.kind === 'approval' ? 'Keputusan' : activity.kind === 'payment' ? 'Pembayaran' : 'Pengajuan',
+      statusClass:
+        activity.tone === 'success' ? 'completed'
+        : activity.tone === 'danger' ? 'rejected'
+        : activity.tone === 'warning' ? 'waiting'
+        : 'ongoing',
+      time: relativeTime(activity.at),
+    }))
+  }
+
+  return (summary.value?.terbaru ?? []).map((trip) => ({
+    id: trip.id,
+    icon: activityIcon(trip.status),
+    title: `Perjalanan dinas ke ${trip.tujuan}`,
+    status: trip.status_label || tripStatusLabel(trip.status),
+    statusClass: tripStatusClass(trip.status),
+    time: relativeTime(trip.created_at),
+  }))
+})
+
+const activityIcon = (status: TripStatus): string => {
+  switch (status) {
+    case 'selesai':
+    case 'lengkap':
+    case 'disetujui':
+      return 'check-circle'
+    case 'berjalan':
+      return 'navigation'
+    case 'diajukan':
+      return 'clock'
+    case 'ditolak':
+      return 'x-circle'
+    default:
+      return 'file-plus'
+  }
+}
+
+const relativeTime = (value: string): string => {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return formatDate(value)
+
+  const diffMinutes = Math.floor((Date.now() - date.getTime()) / 60000)
+
+  if (diffMinutes < 1) return 'Baru saja'
+  if (diffMinutes < 60) return `${diffMinutes} menit lalu`
+
+  const diffHours = Math.floor(diffMinutes / 60)
+  if (diffHours < 24) return `${diffHours} jam lalu`
+
+  const diffDays = Math.floor(diffHours / 24)
+  if (diffDays < 30) return `${diffDays} hari lalu`
+
+  return formatDate(value)
+}
+
+onMounted(async () => {
+  try {
+    await Promise.allSettled([fetchDashboard(), fetchTrips()])
+  } finally {
+    pageLoading.value = false
+  }
+})
 </script>
 
 <style scoped>
@@ -213,9 +317,10 @@ const recentActivities = ref([
 
 .activity-list { display: flex; flex-direction: column; gap: 12px; }
 
-.activity-item { display: flex; align-items: center; min-height: 52px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.activity-item { display: flex; align-items: center; min-height: 52px; padding: 10px 0; border-bottom: 1px solid var(--border); text-decoration: none; color: inherit; }
 .activity-item:last-child { border-bottom: none; }
-.activity-item .activity-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; margin-right: 12px; background: #eef3ff; border-radius: 50%; font-size: 13px; }
+.activity-item[href]:hover .activity-info p { color: var(--primary); }
+.activity-item .activity-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; margin-right: 12px; background: #eef3ff; border-radius: 50%; color: var(--primary); font-size: 16px; }
 .activity-item .activity-info { flex: 1; min-width: 0; }
 .activity-item .activity-info p { margin: 0; font-size: 11px; line-height: 1.4; color: var(--text); overflow-wrap: anywhere; }
 .activity-item .activity-status { margin-right: 14px; padding: 5px 8px; border-radius: 4px; font-size: 9px; white-space: nowrap; }
